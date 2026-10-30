@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-import Navbar from './components/navbar.jsx'
-=======
 import { useState, useEffect } from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop.jsx'
@@ -93,16 +90,8 @@ const AppLayout = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
->>>>>>> Stashed changes
 
-const App = () => {
   return (
-<<<<<<< Updated upstream
-    <div>
-      <Navbar />
-      <main id="home">
-         
-=======
     <div className="min-h-screen bg-white text-gray-900">
       {/* Unified Global Mega Menu Navbar */}
       <Navbar activeRoute={route} onNavigate={navigate} />
@@ -164,14 +153,11 @@ const App = () => {
             <JoinSection />
           </div>
         )}
->>>>>>> Stashed changes
       </main>
     </div>
   )
 }
 
-<<<<<<< Updated upstream
-=======
 const App = () => {
   return (
     <BrowserRouter>
@@ -181,5 +167,4 @@ const App = () => {
   )
 }
 
->>>>>>> Stashed changes
 export default App
