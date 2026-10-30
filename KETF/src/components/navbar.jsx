@@ -39,10 +39,66 @@ const navLinks = [
     label: 'Resources',
     href: '#resources',
     dropdown: [
+<<<<<<< Updated upstream
       { label: 'Projects', href: '#projects' },
       { label: 'News', href: '#news' },
       { label: 'Jobs', href: '#jobs' },
       { label: 'Shop', href: '#shop' },
+=======
+      {
+        label: 'Projects',
+        href: '#projects',
+        desc: 'Completed & ongoing infrastructure interventions',
+        icon: (
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+          />
+        ),
+      },
+      {
+        label: 'News',
+        href: '#news',
+        desc: 'Official press releases, stories & event highlights',
+        icon: (
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+          />
+        ),
+      },
+      {
+        label: 'Jobs',
+        href: '#jobs',
+        desc: 'Finance Manager (Ilorin) & career openings',
+        featuredJob: {
+          title: 'Finance Manager',
+          location: 'Ilorin',
+          href: '#job-finance-manager',
+        },
+        icon: (
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
+        ),
+      },
+      {
+        label: 'Shop',
+        href: '#shop',
+        desc: 'Official branded publications & support items',
+        icon: (
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+          />
+        ),
+      },
+>>>>>>> Stashed changes
     ],
   },
 ]
@@ -51,7 +107,27 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobileOpenDropdown, setMobileOpenDropdown] = useState(null)
+<<<<<<< Updated upstream
   const navRef = useRef(null)
+=======
+  const headerRef = useRef(null)
+
+  const activeMegaItem = navLinks.find(
+    (item) => item.dropdown && item.label === openDropdown
+  )
+
+  const handleLinkClick = (e, href) => {
+    setOpenDropdown(null)
+    setMobileOpenDropdown(null)
+    setMobileMenuOpen(false)
+    if (onNavigate) {
+      if (e && e.preventDefault) {
+        e.preventDefault()
+      }
+      onNavigate(href)
+    }
+  }
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -135,6 +211,7 @@ const Navbar = () => {
                           ? 'visible translate-y-0 opacity-100'
                           : 'invisible -translate-y-1 opacity-0'
                       }`}
+<<<<<<< Updated upstream
                     >
                       <ul className="divide-y divide-gray-200/90">
                         {item.dropdown.map((subItem) => (
@@ -151,6 +228,15 @@ const Navbar = () => {
                       </ul>
                     </div>
                   </>
+=======
+                    />
+                  </button>
+                ) : item.href === '/' ? (
+                  <Link to="/" onClick={(e) => handleLinkClick(e, "#home")} className="px-5 py-6 text-[14.5px] font-semibold text-[#b91c1c] transition-colors hover:text-[#0a7a3e]"
+                  >
+                    {item.label}
+                  </Link>
+>>>>>>> Stashed changes
                 ) : (
                   <a
                     href={item.href}
@@ -279,6 +365,21 @@ const Navbar = () => {
                 )
               }
 
+<<<<<<< Updated upstream
+=======
+              if (item.href === '/') {
+                return (
+                  <li key={item.label}>
+                    <Link to="/" onClick={(e) => handleLinkClick(e, "#home")}
+                      className="block py-3 text-[15px] font-semibold text-[#b91c1c] hover:text-[#0a7a3e]"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                )
+              }
+
+>>>>>>> Stashed changes
               return (
                 <li key={item.label}>
                   <a
