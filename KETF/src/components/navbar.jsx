@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 const navLinks = [
-  { label: 'Home', href: '#home' },
+  { label: 'Home', href: '/' },
   {
     label: 'About',
     href: '#about',
@@ -73,10 +74,10 @@ const Navbar = () => {
         aria-label="Main navigation"
         className="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-8"
       >
-        {/* Left: Logo */}
+        {/* Left: Logo - navigates to Home */}
         <div className="flex items-center justify-start">
-          <a
-            href="#home"
+          <Link
+            to="/"
             aria-label="Kwara State Education Trust Fund home"
             className="shrink-0 py-3"
           >
@@ -85,7 +86,7 @@ const Navbar = () => {
               alt="Kwara State Education Trust Fund"
               className="h-12 w-auto sm:h-14"
             />
-          </a>
+          </Link>
         </div>
 
         {/* Center: 5 Main Navigation Links */}
@@ -151,6 +152,13 @@ const Navbar = () => {
                       </ul>
                     </div>
                   </>
+                ) : item.href === '/' ? (
+                  <Link
+                    to="/"
+                    className="px-5 py-6 text-[14.5px] font-semibold text-[#b91c1c] transition-colors hover:text-[#0a7a3e]"
+                  >
+                    {item.label}
+                  </Link>
                 ) : (
                   <a
                     href={item.href}
@@ -275,6 +283,20 @@ const Navbar = () => {
                         ))}
                       </ul>
                     )}
+                  </li>
+                )
+              }
+
+              if (item.href === '/') {
+                return (
+                  <li key={item.label}>
+                    <Link
+                      to="/"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block py-3 text-[15px] font-semibold text-[#b91c1c] hover:text-[#0a7a3e]"
+                    >
+                      {item.label}
+                    </Link>
                   </li>
                 )
               }
