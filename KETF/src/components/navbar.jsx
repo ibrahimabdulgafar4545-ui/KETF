@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 const navLinks = [
-  { label: 'Home', href: '#home' },
+  { label: 'Home', href: '/' },
   {
     label: 'About',
     href: '#about',
@@ -324,11 +325,13 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
         aria-label="Main navigation"
         className="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-8"
       >
-        {/* Left: Logo */}
+        {/* Left: Logo - navigates to Home */}
         <div className="flex items-center justify-start">
           <a
             href="#home"
             onClick={(e) => handleLinkClick(e, '#home')}
+          <Link
+            to="/"
             aria-label="Kwara State Education Trust Fund home"
             className="shrink-0 py-3"
           >
@@ -337,7 +340,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
               alt="Kwara State Education Trust Fund"
               className="h-12 w-auto sm:h-14"
             />
-          </a>
+          </Link>
         </div>
 
         {/* Center: 5 Main Navigation Links */}
@@ -406,6 +409,29 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                       }`}
                     />
                   </button>
+                    >
+                      <ul className="divide-y divide-gray-200/90">
+                        {item.dropdown.map((subItem) => (
+                          <li key={subItem.label}>
+                            <a
+                              href={subItem.href}
+                              onClick={() => setOpenDropdown(null)}
+                              className="block px-6 py-4 text-[14.5px] leading-relaxed font-normal text-gray-600 transition-colors hover:bg-[#e5e5e5] hover:text-[#b2964e]"
+                            >
+                              {subItem.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                ) : item.href === '/' ? (
+                  <Link
+                    to="/"
+                    className="px-5 py-6 text-[14.5px] font-semibold text-[#b91c1c] transition-colors hover:text-[#0a7a3e]"
+                  >
+                    {item.label}
+                  </Link>
                 ) : (
                   <a
                     href={item.href}
@@ -676,6 +702,20 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                         ))}
                       </div>
                     )}
+                  </li>
+                )
+              }
+
+              if (item.href === '/') {
+                return (
+                  <li key={item.label}>
+                    <Link
+                      to="/"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block py-3 text-[15px] font-semibold text-[#b91c1c] hover:text-[#0a7a3e]"
+                    >
+                      {item.label}
+                    </Link>
                   </li>
                 )
               }

@@ -2,6 +2,8 @@
 
 @theme {
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Plus Jakarta Sans", "Montserrat", "Poppins", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
 }
 
 body {
