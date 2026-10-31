@@ -493,70 +493,66 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
         <div
           onMouseEnter={() => setOpenDropdown(activeMegaItem.label)}
           onMouseLeave={() => setOpenDropdown(null)}
-          className="absolute top-full right-0 left-0 border-b border-gray-200 bg-white shadow-xl transition-all"
+          className="absolute top-full right-0 left-0 border-b border-gray-200/90 bg-white/98 backdrop-blur-md shadow-xl transition-all"
         >
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-              {/* Left Column: Mega Category Context Card */}
-              <div className="lg:col-span-4 flex flex-col justify-between rounded-2xl bg-gradient-to-br from-[#064e3b] via-[#066842] to-[#084d49] p-7 text-white shadow-xs">
-                <div>
-                  <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wider text-[#f3df9d] uppercase">
-                    {activeMegaItem.label} Overview
-                  </span>
-                  <h3 className="mt-4 text-2xl font-bold tracking-tight text-white">
-                    {activeMegaItem.megaTitle || activeMegaItem.label}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-emerald-50/90">
-                    {activeMegaItem.megaDescription}
-                  </p>
-                </div>
-
-                {activeMegaItem.megaCta && (
-                  <div className="mt-6 pt-5 border-t border-white/20">
-                    <a
-                      href={activeMegaItem.megaCta.href}
-                      onClick={(e) => handleLinkClick(e, activeMegaItem.megaCta.href)}
-                      className="inline-flex items-center gap-2 text-xs font-bold text-[#f3df9d] hover:text-white transition-colors"
-                    >
-                      <span>{activeMegaItem.megaCta.label}</span>
-                      <span>&rarr;</span>
-                    </a>
-                  </div>
-                )}
+          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+            {/* Header category label */}
+            <div className="mb-6 flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#066842]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                  {activeMegaItem.label} Directory
+                </span>
               </div>
+              <span className="text-xs text-gray-400">
+                Official KwaraETF Resources
+              </span>
+            </div>
 
-              {/* Right Column: Dynamic Sub-links Grid */}
-              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {activeMegaItem.dropdown.map((subItem) => (
-                  <a
-                    key={subItem.label}
-                    href={subItem.href}
-                    onClick={(e) => handleLinkClick(e, subItem.href)}
-                    className="group flex items-start gap-4 rounded-xl border border-gray-100 bg-[#fbfdfc] p-4.5 transition-all duration-200 hover:border-[#c8b268] hover:bg-white hover:shadow-sm"
-                  >
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-[#066842] transition-colors group-hover:bg-[#066842] group-hover:text-white">
-                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                        {subItem.icon}
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-[15px] font-bold text-gray-900 group-hover:text-[#066842] transition-colors">
+            {/* Dynamic Sub-links Grid */}
+            <div
+              className={`mx-auto grid gap-4.5 ${
+                activeMegaItem.dropdown.length === 4
+                  ? 'max-w-4xl grid-cols-1 sm:grid-cols-2'
+                  : activeMegaItem.dropdown.length === 6
+                  ? 'max-w-6xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                  : 'max-w-5xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+              }`}
+            >
+              {activeMegaItem.dropdown.map((subItem) => (
+                <a
+                  key={subItem.label}
+                  href={subItem.href}
+                  onClick={(e) => handleLinkClick(e, subItem.href)}
+                  className="group flex items-start gap-4 rounded-xl border border-gray-100 bg-[#fbfdfc] p-4.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#c8b268] hover:bg-white hover:shadow-md cursor-pointer"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-[#066842] transition-colors duration-200 group-hover:bg-[#066842] group-hover:text-white">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                      {subItem.icon}
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className="text-[15px] font-bold text-gray-900 transition-colors duration-200 group-hover:text-[#066842]">
                         {subItem.label}
                       </h4>
-                      <p className="mt-1 text-xs leading-relaxed text-gray-500">
-                        {subItem.desc}
-                      </p>
-                      {subItem.featuredJob && (
-                        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-800">
-                          <span>{subItem.featuredJob.title}</span>
-                          <span>&bull;</span>
-                          <span>{subItem.featuredJob.location}</span>
-                        </div>
-                      )}
+                      <span className="text-[#066842] opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1 font-semibold text-sm">
+                        &rarr;
+                      </span>
                     </div>
-                  </a>
-                ))}
-              </div>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-500">
+                      {subItem.desc}
+                    </p>
+                    {subItem.featuredJob && (
+                      <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200/70 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800">
+                        <span>{subItem.featuredJob.title}</span>
+                        <span>&bull;</span>
+                        <span>{subItem.featuredJob.location}</span>
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
         </div>
