@@ -25,6 +25,22 @@ import News from './components/News.jsx'
 import InMemoriamNews from './components/InMemoriamNews.jsx'
 import AnniversaryNews from './components/AnniversaryNews.jsx'
 import WorldBankForumNews from './components/WorldBankForumNews.jsx'
+import OyawoyeFoundationNews from './components/OyawoyeFoundationNews.jsx'
+import PtaLevyGrantsNews from './components/PtaLevyGrantsNews.jsx'
+import BoardInductionNews from './components/BoardInductionNews.jsx'
+import UnitySchoolScholarshipsNews from './components/UnitySchoolScholarshipsNews.jsx'
+import AdminFeeCaseStudyNews from './components/AdminFeeCaseStudyNews.jsx'
+import FirstCohortScholarsNews from './components/FirstCohortScholarsNews.jsx'
+import NceeResultsNews from './components/NceeResultsNews.jsx'
+import NccBoardAppointmentNews from './components/NccBoardAppointmentNews.jsx'
+import AlHikmahDonationNews from './components/AlHikmahDonationNews.jsx'
+import KwaraetfLawAmendedNews from './components/KwaraetfLawAmendedNews.jsx'
+import CelebrateAboyejiNews from './components/CelebrateAboyejiNews.jsx'
+import MockNceeTop180News from './components/MockNceeTop180News.jsx'
+import PublicSchoolsUpgradeNews from './components/PublicSchoolsUpgradeNews.jsx'
+import CelebrateLaunchNews from './components/CelebrateLaunchNews.jsx'
+import NceeScholarshipLaunchNews from './components/NceeScholarshipLaunchNews.jsx'
+import AdoptASchoolDriveNews from './components/AdoptASchoolDriveNews.jsx'
 import TwoYearsBuildingNews from './components/TwoYearsBuildingNews.jsx'
 import GenericNewsArticle from './components/GenericNewsArticle.jsx'
 import Hero from './components/Hero.jsx'
@@ -149,14 +165,51 @@ const AppLayout = () => {
           <AnniversaryNews onNavigate={navigate} />
         ) : route === '#news-world-bank-abuja' ? (
           <WorldBankForumNews onNavigate={navigate} />
-        ) : route === '#news' || route === '#news-page-4' ? (
-          <News onNavigate={navigate} initialPage={route === '#news-page-4' ? 4 : 1} />
+        ) : route === '#news-oyawoye-foundation' ? (
+          <OyawoyeFoundationNews onNavigate={navigate} />
+        ) : route === '#news-pta-levy-annual-grants' ? (
+          <PtaLevyGrantsNews onNavigate={navigate} />
+        ) : route === '#news-induction-new-board-members' ? (
+          <BoardInductionNews onNavigate={navigate} />
+        ) : route === '#news-unity-school-scholarships' ? (
+          <UnitySchoolScholarshipsNews onNavigate={navigate} />
+        ) : route === '#news-case-study-administrative-fee' ? (
+          <AdminFeeCaseStudyNews onNavigate={navigate} />
+        ) : route === '#news-first-cohort-12-scholars' ? (
+          <FirstCohortScholarsNews onNavigate={navigate} />
+        ) : route === '#news-ncee-results-promise-gaps' ? (
+          <NceeResultsNews onNavigate={navigate} />
+        ) : route === '#news-ncc-board-appointment' ? (
+          <NccBoardAppointmentNews onNavigate={navigate} />
+        ) : route === '#news-al-hikmah-donation' ? (
+          <AlHikmahDonationNews onNavigate={navigate} />
+        ) : route === '#news-kwaraetf-law-amended' ? (
+          <KwaraetfLawAmendedNews onNavigate={navigate} />
+        ) : route === '#news-celebrate-aboyeji' ? (
+          <CelebrateAboyejiNews onNavigate={navigate} />
+        ) : route === '#news-mock-ncee-top-180' ? (
+          <MockNceeTop180News onNavigate={navigate} />
+        ) : route === '#news-public-schools-upgrade' ? (
+          <PublicSchoolsUpgradeNews onNavigate={navigate} />
+        ) : route === '#news-celebrate-launch' ? (
+          <CelebrateLaunchNews onNavigate={navigate} />
+        ) : route === '#news-ncee-scholarship-launch' ? (
+          <NceeScholarshipLaunchNews onNavigate={navigate} />
+        ) : route === '#news-adopt-a-school-drive' ? (
+          <AdoptASchoolDriveNews onNavigate={navigate} />
         ) : route === '#news-two-years-of-building-for-impact' ? (
           <TwoYearsBuildingNews onNavigate={navigate} />
+        ) : route === '#news' || route.startsWith('#news-page-') ? (
+          <News
+            onNavigate={navigate}
+            initialPage={
+              route.startsWith('#news-page-')
+                ? parseInt(route.replace('#news-page-', ''), 10) || 1
+                : 1
+            }
+          />
         ) : route.startsWith('#news-') ? (
           <GenericNewsArticle articleSlug={route} onNavigate={navigate} />
-        ) : route === '#news' ? (
-          <News onNavigate={navigate} />
         ) : route === '#contact' || location.pathname === '/contact' ? (
           <ContactPage />
         ) : route === '#about' ||
@@ -170,7 +223,7 @@ const AppLayout = () => {
             <Hero />
             <VisionSection />
             <BelieveSection />
-            <InitiativesSection />
+            <InitiativesSection onNavigate={navigate} />
             <NewsSection onNavigate={navigate} />
             <NewsletterSection />
             <PillarsSection />
