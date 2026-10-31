@@ -23,6 +23,8 @@ import TeachersLoungeInitiative from './components/TeachersLoungeInitiative.jsx'
 import ScholarshipsInitiative from './components/ScholarshipsInitiative.jsx'
 import News from './components/News.jsx'
 import InMemoriamNews from './components/InMemoriamNews.jsx'
+import AnniversaryNews from './components/AnniversaryNews.jsx'
+import WorldBankForumNews from './components/WorldBankForumNews.jsx'
 import TwoYearsBuildingNews from './components/TwoYearsBuildingNews.jsx'
 import GenericNewsArticle from './components/GenericNewsArticle.jsx'
 import Hero from './components/Hero.jsx'
@@ -143,6 +145,12 @@ const AppLayout = () => {
           <ScholarshipsInitiative onNavigate={navigate} />
         ) : route === '#news-in-memoriam' ? (
           <InMemoriamNews onNavigate={navigate} />
+        ) : route === '#news-anniversary-office' ? (
+          <AnniversaryNews onNavigate={navigate} />
+        ) : route === '#news-world-bank-abuja' ? (
+          <WorldBankForumNews onNavigate={navigate} />
+        ) : route === '#news' || route === '#news-page-4' ? (
+          <News onNavigate={navigate} initialPage={route === '#news-page-4' ? 4 : 1} />
         ) : route === '#news-two-years-of-building-for-impact' ? (
           <TwoYearsBuildingNews onNavigate={navigate} />
         ) : route.startsWith('#news-') ? (
