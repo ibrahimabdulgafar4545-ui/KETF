@@ -23,6 +23,8 @@ import TeachersLoungeInitiative from './components/TeachersLoungeInitiative.jsx'
 import ScholarshipsInitiative from './components/ScholarshipsInitiative.jsx'
 import News from './components/News.jsx'
 import InMemoriamNews from './components/InMemoriamNews.jsx'
+import AnniversaryNews from './components/AnniversaryNews.jsx'
+import WorldBankForumNews from './components/WorldBankForumNews.jsx'
 import Hero from './components/Hero.jsx'
 import VisionSection from './components/VisionSection.jsx'
 import BelieveSection from './components/BelieveSection.jsx'
@@ -141,8 +143,12 @@ const AppLayout = () => {
           <ScholarshipsInitiative onNavigate={navigate} />
         ) : route === '#news-in-memoriam' ? (
           <InMemoriamNews onNavigate={navigate} />
-        ) : route === '#news' ? (
-          <News onNavigate={navigate} />
+        ) : route === '#news-anniversary-office' ? (
+          <AnniversaryNews onNavigate={navigate} />
+        ) : route === '#news-world-bank-abuja' ? (
+          <WorldBankForumNews onNavigate={navigate} />
+        ) : route === '#news' || route === '#news-page-4' ? (
+          <News onNavigate={navigate} initialPage={route === '#news-page-4' ? 4 : 1} />
         ) : route === '#contact' || location.pathname === '/contact' ? (
           <ContactPage />
         ) : route === '#about' ||
