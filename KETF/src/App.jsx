@@ -18,6 +18,9 @@ import PoliciesAndGuidelines from './components/PoliciesAndGuidelines.jsx'
 import AdministrativeFee from './components/AdministrativeFee.jsx'
 import Jobs from './components/Jobs.jsx'
 import FinanceManagerJob from './components/FinanceManagerJob.jsx'
+import Projects from './components/Projects.jsx'
+import TeachersLoungeInitiative from './components/TeachersLoungeInitiative.jsx'
+import ScholarshipsInitiative from './components/ScholarshipsInitiative.jsx'
 import News from './components/News.jsx'
 import InMemoriamNews from './components/InMemoriamNews.jsx'
 import Hero from './components/Hero.jsx'
@@ -28,6 +31,7 @@ import InitiativesSection from './components/InitiativesSection.jsx'
 import NewsSection from './components/NewsSection.jsx'
 import NewsletterSection from './components/NewsletterSection.jsx'
 import PillarsSection from './components/PillarsSection.jsx'
+import Footer from './components/Footer.jsx'
 import ReadMore from './pages/ReadMore.jsx'
 import ContactPage from './pages/ContactPage.jsx'
 
@@ -92,11 +96,11 @@ const AppLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col justify-between">
       {/* Unified Global Mega Menu Navbar */}
       <Navbar activeRoute={route} onNavigate={navigate} />
 
-      <main>
+      <main className="flex-1">
         {route === '#the-law' ? (
           <TheLaw onNavigate={navigate} />
         ) : route === '#board-members' ? (
@@ -129,6 +133,12 @@ const AppLayout = () => {
           <FinanceManagerJob onNavigate={navigate} />
         ) : route === '#jobs' ? (
           <Jobs onNavigate={navigate} />
+        ) : route === '#projects' ? (
+          <Projects onNavigate={navigate} />
+        ) : route === '#teachers-lounge-initiative' ? (
+          <TeachersLoungeInitiative onNavigate={navigate} />
+        ) : route === '#scholarships-initiative' ? (
+          <ScholarshipsInitiative onNavigate={navigate} />
         ) : route === '#news-in-memoriam' ? (
           <InMemoriamNews onNavigate={navigate} />
         ) : route === '#news' ? (
@@ -154,6 +164,9 @@ const AppLayout = () => {
           </div>
         )}
       </main>
+
+      {/* Global Executive Footer */}
+      <Footer onNavigate={navigate} />
     </div>
   )
 }
