@@ -1,16 +1,7 @@
 import { newsArticles } from '../data/newsArticles.js'
 
 const NewsSection = ({ onNavigate }) => {
-  const handleOpenArticle = (e, slug) => {
-    e.preventDefault()
-    if (onNavigate) {
-      onNavigate(slug)
-    } else {
-      window.location.hash = slug
-    }
-  }
-
-  const handleOpenAllNews = (e) => {
+  const handleOpenNewsPage = (e) => {
     e.preventDefault()
     if (onNavigate) {
       onNavigate('#news')
@@ -19,8 +10,11 @@ const NewsSection = ({ onNavigate }) => {
     }
   }
 
+  // Show only ONE featured news article on the home page
+  const featuredArticles = newsArticles.slice(0, 1)
+
   return (
-    <section id="news" className="w-full bg-white py-16 sm:py-20 lg:py-24">
+    <section id="news-section" className="w-full bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Section Heading with horizontal divider lines */}
         <div className="flex items-center gap-4 mb-12 sm:mb-16">
@@ -35,7 +29,7 @@ const NewsSection = ({ onNavigate }) => {
         </div>
 
         <div className="mx-auto max-w-5xl space-y-10">
-          {newsArticles.map((article, idx) => (
+          {featuredArticles.map((article) => (
             <div
               key={article.id}
               className="border border-gray-200 bg-white p-6 sm:p-9 shadow-xs hover:border-[#c8b268]/80 transition-all duration-200 hover:shadow-md"
@@ -44,7 +38,7 @@ const NewsSection = ({ onNavigate }) => {
                 {/* Beside Image */}
                 <div className="md:col-span-5 w-full">
                   <div
-                    onClick={(e) => handleOpenArticle(e, article.slug)}
+                    onClick={handleOpenNewsPage}
                     className="overflow-hidden border border-gray-200 bg-gray-50 shadow-2xs cursor-pointer group/card rounded-sm"
                   >
                     <img
@@ -69,13 +63,9 @@ const NewsSection = ({ onNavigate }) => {
                       )}
                       <span>
                         Published by{' '}
-                        <a
-                          href="#"
-                          onClick={(e) => e.preventDefault()}
-                          className="font-bold text-[#066842] hover:text-[#b31b1b] hover:underline cursor-pointer transition-colors"
-                        >
+                        <span className="font-bold text-[#066842]">
                           {article.publishedBy}
-                        </a>
+                        </span>
                       </span>
                       <span>&bull;</span>
                       <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
@@ -89,8 +79,8 @@ const NewsSection = ({ onNavigate }) => {
                       className="text-xl sm:text-2xl font-bold text-gray-900 leading-snug tracking-tight"
                     >
                       <a
-                        href={article.slug}
-                        onClick={(e) => handleOpenArticle(e, article.slug)}
+                        href="#news"
+                        onClick={handleOpenNewsPage}
                         className="hover:text-[#066842] hover:underline cursor-pointer transition-colors"
                       >
                         {article.title}
@@ -103,11 +93,11 @@ const NewsSection = ({ onNavigate }) => {
                     </p>
                   </div>
 
-                  {/* Read More button */}
+                  {/* Read More button - Takes user to the News Page */}
                   <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
                     <a
-                      href={article.slug}
-                      onClick={(e) => handleOpenArticle(e, article.slug)}
+                      href="#news"
+                      onClick={handleOpenNewsPage}
                       className="inline-flex items-center gap-2 rounded-full border border-[#066842] bg-[#066842] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#b31b1b] hover:border-[#b31b1b] hover:shadow-md cursor-pointer"
                     >
                       <span>Read more</span>
@@ -115,7 +105,7 @@ const NewsSection = ({ onNavigate }) => {
                     </a>
 
                     <span className="text-xs text-gray-400 font-medium">
-                      Dispatch #{idx + 1}
+                      Latest Featured Dispatch
                     </span>
                   </div>
                 </div>
@@ -127,11 +117,10 @@ const NewsSection = ({ onNavigate }) => {
           <div className="pt-6 text-center">
             <a
               href="#news"
-              onClick={handleOpenAllNews}
-              className="inline-flex items-center gap-2 rounded-full border border-[#066842] px-8 py-3.5 text-sm font-bold text-[#066842] transition-all hover:bg-[#066842] hover:text-white shadow-xs"
+              onClick={handleOpenNewsPage}
+              className="inline-flex items-center gap-2 rounded-full border border-[#066842] px-8 py-3.5 text-sm font-bold text-[#066842] transition-all hover:bg-[#066842] hover:text-white shadow-xs cursor-pointer"
             >
-              <span>Explore All News Dispatches ({newsArticles.length})</span>
-              <span>&rarr;</span>
+              <span>Explore All News Dispatches &rarr;</span>
             </a>
           </div>
         </div>
