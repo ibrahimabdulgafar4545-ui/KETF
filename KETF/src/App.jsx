@@ -1,3 +1,4 @@
+import MobileSimulator from './components/MobileSimulator.jsx'
 import { useState, useEffect } from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop.jsx'
@@ -234,6 +235,9 @@ const AppLayout = () => {
 
       {/* Global Executive Footer */}
       <Footer onNavigate={navigate} />
+
+      {/* Interactive Mobile Device Simulator Toggle & Workspace */}
+      <MobileSimulator activeRoute={route} onNavigate={navigate} />
     </div>
   )
 }
