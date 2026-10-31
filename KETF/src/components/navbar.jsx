@@ -262,18 +262,6 @@ const navLinks = [
           />
         ),
       },
-      {
-        label: 'Shop',
-        href: '#shop',
-        desc: 'Official branded publications & support items',
-        icon: (
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-          />
-        ),
-      },
     ],
   },
 ]
@@ -382,14 +370,14 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                     aria-expanded={isOpen}
                     className={`relative inline-flex cursor-pointer items-center gap-1.5 px-5 py-6 text-[14.5px] font-semibold transition-colors ${
                       isOpen || isActiveParent
-                        ? 'text-[#0a7a3e]'
-                        : 'text-[#b91c1c] hover:text-[#0a7a3e]'
+                        ? 'text-[#b91c1c]'
+                        : 'text-[#066842] hover:text-[#b91c1c]'
                     }`}
                   >
                     <span>{item.label}</span>
                     <svg
                       className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180 text-[#0a7a3e]' : 'opacity-75'
+                        isOpen ? 'rotate-180 text-[#b91c1c]' : 'opacity-85'
                       }`}
                       fill="none"
                       viewBox="0 0 24 24"
@@ -407,7 +395,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                     {/* Active / Open Bottom Indicator Bar */}
                     <span
                       aria-hidden="true"
-                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#066842] transition-all duration-200 ${
+                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#b91c1c] transition-all duration-200 ${
                         isOpen || isActiveParent
                           ? 'scale-x-100 opacity-100'
                           : 'scale-x-0 opacity-0'
@@ -418,9 +406,21 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                   <Link
                     to="/"
                     onClick={(e) => handleLinkClick(e, '#home')}
-                    className="px-5 py-6 text-[14.5px] font-semibold text-[#b91c1c] transition-colors hover:text-[#0a7a3e]"
+                    className={`relative px-5 py-6 text-[14.5px] font-semibold transition-colors ${
+                      activeRoute === '#home' || activeRoute === '/'
+                        ? 'text-[#b91c1c]'
+                        : 'text-[#066842] hover:text-[#b91c1c]'
+                    }`}
                   >
                     {item.label}
+                    <span
+                      aria-hidden="true"
+                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#b91c1c] transition-all duration-200 ${
+                        activeRoute === '#home' || activeRoute === '/'
+                          ? 'scale-x-100 opacity-100'
+                          : 'scale-x-0 opacity-0'
+                      }`}
+                    />
                   </Link>
                 ) : (
                   <a
@@ -428,14 +428,14 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                     onClick={(e) => handleLinkClick(e, item.href)}
                     className={`relative px-5 py-6 text-[14.5px] font-semibold transition-colors ${
                       isActiveParent
-                        ? 'text-[#0a7a3e]'
-                        : 'text-[#b91c1c] hover:text-[#0a7a3e]'
+                        ? 'text-[#b91c1c]'
+                        : 'text-[#066842] hover:text-[#b91c1c]'
                     }`}
                   >
                     {item.label}
                     <span
                       aria-hidden="true"
-                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#066842] transition-all duration-200 ${
+                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#b91c1c] transition-all duration-200 ${
                         isActiveParent
                           ? 'scale-x-100 opacity-100'
                           : 'scale-x-0 opacity-0'
@@ -577,7 +577,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                         )
                       }
                       className={`flex w-full items-center justify-between py-3.5 text-left text-[15px] font-semibold transition-colors ${
-                        isMobileOpen ? 'text-[#0a7a3e]' : 'text-[#b91c1c]'
+                        isMobileOpen ? 'text-[#b91c1c]' : 'text-[#066842] hover:text-[#b91c1c]'
                       }`}
                     >
                       <span>{item.label}</span>
@@ -630,7 +630,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                     <Link
                       to="/"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block py-3 text-[15px] font-semibold text-[#b91c1c] hover:text-[#0a7a3e]"
+                      className="block py-3 text-[15px] font-semibold text-[#066842] hover:text-[#b91c1c]"
                     >
                       {item.label}
                     </Link>
@@ -643,7 +643,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                   <a
                     href={item.href}
                     onClick={(e) => handleLinkClick(e, item.href)}
-                    className="block py-3.5 text-[15px] font-semibold text-[#b91c1c] hover:text-[#0a7a3e]"
+                    className="block py-3.5 text-[15px] font-semibold text-[#066842] hover:text-[#b91c1c]"
                   >
                     {item.label}
                   </a>
