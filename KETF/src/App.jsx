@@ -23,6 +23,8 @@ import TeachersLoungeInitiative from './components/TeachersLoungeInitiative.jsx'
 import ScholarshipsInitiative from './components/ScholarshipsInitiative.jsx'
 import News from './components/News.jsx'
 import InMemoriamNews from './components/InMemoriamNews.jsx'
+import TwoYearsBuildingNews from './components/TwoYearsBuildingNews.jsx'
+import GenericNewsArticle from './components/GenericNewsArticle.jsx'
 import Hero from './components/Hero.jsx'
 import VisionSection from './components/VisionSection.jsx'
 import BelieveSection from './components/BelieveSection.jsx'
@@ -96,11 +98,11 @@ const AppLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 flex flex-col justify-between">
+    <div className="min-h-screen bg-white text-gray-900">
       {/* Unified Global Mega Menu Navbar */}
       <Navbar activeRoute={route} onNavigate={navigate} />
 
-      <main className="flex-1">
+      <main>
         {route === '#the-law' ? (
           <TheLaw onNavigate={navigate} />
         ) : route === '#board-members' ? (
@@ -141,6 +143,10 @@ const AppLayout = () => {
           <ScholarshipsInitiative onNavigate={navigate} />
         ) : route === '#news-in-memoriam' ? (
           <InMemoriamNews onNavigate={navigate} />
+        ) : route === '#news-two-years-of-building-for-impact' ? (
+          <TwoYearsBuildingNews onNavigate={navigate} />
+        ) : route.startsWith('#news-') ? (
+          <GenericNewsArticle articleSlug={route} onNavigate={navigate} />
         ) : route === '#news' ? (
           <News onNavigate={navigate} />
         ) : route === '#contact' || location.pathname === '/contact' ? (
