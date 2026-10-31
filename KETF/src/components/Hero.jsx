@@ -14,11 +14,11 @@ const Hero = () => {
           className="h-full w-full object-cover object-center"
         />
         {/* Balanced overlay - keeps the image vivid while ensuring text readability */}
-        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-black/66" />
       </div>
 
       {/* Centered Content */}
-      <div className="relative z-10 mx-auto max-w-5xl px-4 py-20 text-center flex flex-col items-center">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 py-20 mt-27 text-center flex flex-col items-center">
         {/* Main Heading with clean Plus Jakarta Sans typography */}
         <h1
           style={{ fontFamily: "'Plus Jakarta Sans', 'Poppins', sans-serif" }}

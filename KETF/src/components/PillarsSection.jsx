@@ -4,11 +4,11 @@ const pillars = [
     title: 'COMMITMENT',
     description:
       'We are dedicated to making sustainable investments in quality education. This commitment ensures that our initiatives have a lasting impact, benefiting current and future generations of students in Kwara.',
-    // Green Theme
-    bgGradient: 'from-[#066842] to-[#04432a]',
+    // KETF Sovereign Forest Green
+    bgGradient: 'from-[#066842] via-[#055737] to-[#072417]',
     accentColor: '#c8b268',
     iconBg: 'bg-white/10',
-    shadowHover: 'hover:shadow-[#066842]/30',
+    shadowHover: 'hover:shadow-[#066842]/35',
     icon: (
       <path
         strokeLinecap="round"
@@ -23,11 +23,11 @@ const pillars = [
     title: 'ACCESSIBILITY',
     description:
       'We aim to create a future where education is accessible to all. They prioritize inclusivity, working to remove barriers and ensure that every individual in Kwara has the opportunity to access quality education, regardless of background or circumstance.',
-    // Ochre / Gold Theme
-    bgGradient: 'from-[#b48a34] to-[#8c671f]',
-    accentColor: '#ffffff',
+    // KETF Heritage Cognac / Amber (from signature brand gradient strip)
+    bgGradient: 'from-[#5a3210] via-[#48270b] to-[#2c1604]',
+    accentColor: '#c8b268',
     iconBg: 'bg-white/10',
-    shadowHover: 'hover:shadow-[#b48a34]/30',
+    shadowHover: 'hover:shadow-[#5a3210]/35',
     icon: (
       <path
         strokeLinecap="round"
@@ -42,11 +42,11 @@ const pillars = [
     title: 'INNOVATION',
     description:
       'We seek to power innovation in education. They envision a future where education becomes a driving force behind innovation and endless opportunities for all. Through innovative approaches and initiatives, they strive to revolutionize the educational landscape in Kwara, fostering creativity, critical thinking, and problem-solving skills among students.',
-    // Deep Ocean Blue Theme
-    bgGradient: 'from-[#135a8a] to-[#0c3e61]',
+    // KETF Deep Pine Teal (from signature brand gradient strip)
+    bgGradient: 'from-[#084d49] via-[#063f3c] to-[#032826]',
     accentColor: '#c8b268',
     iconBg: 'bg-white/10',
-    shadowHover: 'hover:shadow-[#135a8a]/30',
+    shadowHover: 'hover:shadow-[#084d49]/35',
     icon: (
       <path
         strokeLinecap="round"
@@ -63,14 +63,31 @@ const PillarsSection = () => {
     <section className="relative w-full overflow-hidden bg-[#FAFBFD] py-20 sm:py-28 lg:py-32">
       {/* Background ambient lighting */}
       <div
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[900px] rounded-full bg-gray-100/60 blur-3xl"
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[900px] rounded-full bg-[#066842]/5 blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
+        {/* Section Header */}
+        <div className="flex items-center gap-4 mb-12 sm:mb-16">
+          <div className="flex-1 h-px bg-[#103C20]/20" />
+          <div className="text-center">
+            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#066842] block mb-1">
+              Foundational Principles
+            </span>
+            <h2
+              style={{ fontFamily: "'Montserrat', 'Plus Jakarta Sans', sans-serif" }}
+              className="text-2xl sm:text-3xl font-black text-[#103C20] uppercase tracking-tight"
+            >
+              Our Core Pillars
+            </h2>
+          </div>
+          <div className="flex-1 h-px bg-[#103C20]/20" />
+        </div>
+
         {/* 3 Pillars Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-7 lg:gap-8 items-stretch">
           {pillars.map((pillar) => (
             <div
               key={pillar.id}
@@ -84,10 +101,9 @@ const PillarsSection = () => {
                 {pillar.id}
               </div>
 
-              {/* Top Accent Strip */}
+              {/* Top Gold Accent Strip */}
               <div
-                className="absolute top-0 inset-x-0 h-1 bg-white/20 transition-all duration-300 group-hover:h-1.5"
-                style={{ backgroundColor: pillar.accentColor }}
+                className="absolute top-0 inset-x-0 h-1 bg-[#c8b268] transition-all duration-300 group-hover:h-1.5"
               />
 
               {/* Card Header */}
@@ -95,13 +111,13 @@ const PillarsSection = () => {
                 {/* Icon & Index Badge */}
                 <div className="flex items-center justify-between mb-8">
                   <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${pillar.iconBg} backdrop-blur-xs border border-white/15 text-white transition-transform duration-300 group-hover:scale-110`}
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${pillar.iconBg} backdrop-blur-xs border border-white/15 text-[#c8b268] transition-transform duration-300 group-hover:scale-110`}
                   >
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       {pillar.icon}
                     </svg>
                   </div>
-                  <span className="text-xs font-mono font-bold tracking-widest text-white/40 group-hover:text-white/70 transition-colors">
+                  <span className="text-xs font-mono font-bold tracking-widest text-[#c8b268]/70 group-hover:text-[#c8b268] transition-colors">
                     {pillar.id}
                   </span>
                 </div>
@@ -114,8 +130,8 @@ const PillarsSection = () => {
                   {pillar.title}
                 </h3>
 
-                {/* Divider Accent */}
-                <div className="mb-6 h-0.5 w-12 bg-white/30 transition-all duration-300 group-hover:w-16 group-hover:bg-white/60" />
+                {/* Divider Accent in brand gold */}
+                <div className="mb-6 h-0.5 w-12 bg-[#c8b268]/50 transition-all duration-300 group-hover:w-16 group-hover:bg-[#c8b268]" />
 
                 {/* Description */}
                 <p className="text-sm sm:text-[15px] leading-relaxed text-white/90 font-normal">
@@ -124,9 +140,9 @@ const PillarsSection = () => {
               </div>
 
               {/* Bottom Subtle Corner Accent */}
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/50 group-hover:text-white/80 transition-colors">
-                <span className="uppercase tracking-widest font-semibold text-[11px]">Core Pillar</span>
-                <span className="transform transition-transform duration-300 group-hover:translate-x-1">→</span>
+              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/60 group-hover:text-white/90 transition-colors">
+                <span className="uppercase tracking-widest font-semibold text-[11px] text-[#c8b268]">Core Pillar</span>
+                <span className="transform transition-transform duration-300 group-hover:translate-x-1 text-[#c8b268]">→</span>
               </div>
             </div>
           ))}
@@ -138,4 +154,3 @@ const PillarsSection = () => {
 }
 
 export default PillarsSection
-

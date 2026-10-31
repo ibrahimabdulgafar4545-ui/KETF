@@ -330,7 +330,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
 
       <nav
         aria-label="Main navigation"
-        className="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-8"
+        className="mx-auto grid max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-[1fr_auto_1fr] lg:px-8"
       >
         {/* Left: Logo - navigates to Home */}
         <div className="flex items-center justify-start">
@@ -560,7 +560,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="border-b border-gray-200 bg-white lg:hidden">
+        <div className="border-b border-gray-200 bg-white lg:hidden max-h-[82vh] overflow-y-auto shadow-xl">
           <ul className="divide-y divide-gray-100 px-4 py-2">
             {navLinks.map((item) => {
               const hasDropdown = Boolean(item.dropdown)
