@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import { newsArticles } from '../data/newsArticles.js'
+import { newsArticlesPage2 } from '../data/newsArticlesPage2.js'
+import { newsArticlesPage3 } from '../data/newsArticlesPage3.js'
+import { newsArticlesPage4 } from '../data/newsArticlesPage4.js'
+import { newsArticlesPage6 } from '../data/newsArticlesPage6.js'
+import { newsArticlesPage7 } from '../data/newsArticlesPage7.js'
 
 const socialIconsData = [
   {
@@ -43,7 +48,15 @@ const socialIconsData = [
 const GenericNewsArticle = ({ articleSlug, onNavigate }) => {
   const [liked, setLiked] = useState(false)
 
-  const article = newsArticles.find((a) => a.slug === articleSlug)
+  const allArticles = [
+    ...newsArticles,
+    ...newsArticlesPage2,
+    ...newsArticlesPage3,
+    ...newsArticlesPage4,
+    ...newsArticlesPage6,
+    ...newsArticlesPage7,
+  ]
+  const article = allArticles.find((a) => a.slug === articleSlug)
 
   const handleBackToNews = (e) => {
     if (onNavigate) {
@@ -228,15 +241,72 @@ const GenericNewsArticle = ({ articleSlug, onNavigate }) => {
                   </h2>
                 )}
 
-                {/* Embedded Image for this section (e.g., N5) */}
+                {/* Embedded Image for this section (e.g., N5, P5) */}
                 {section.embeddedImage && (
-                  <div className="my-6 overflow-hidden rounded-lg border border-gray-200/90 shadow-sm">
+                  <div className="my-6 overflow-hidden rounded-xl border border-gray-200/90 shadow-sm bg-gray-50">
                     <img
                       src={section.embeddedImage.src}
-                      alt={section.embeddedImage.alt}
+                      alt={section.embeddedImage.alt || ''}
                       className="w-full h-auto object-cover block"
                       loading="lazy"
                     />
+                    {section.embeddedImage.caption && (
+                      <p className="px-4 py-2.5 text-xs text-gray-500 italic bg-gray-50/90 border-t border-gray-100">
+                        {section.embeddedImage.caption}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Profile Cards (e.g., P4 Co-Opted Members) */}
+                {section.profileCards && (
+                  <div className="my-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {section.profileCards.map((card, cIdx) => (
+                      <div
+                        key={cIdx}
+                        className="flex flex-col overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-b from-white to-[#fbfdfc] shadow-sm transition-all duration-300 hover:shadow-md hover:border-emerald-200"
+                      >
+                        <div className="h-80 sm:h-96 w-full overflow-hidden bg-gray-100">
+                          <img
+                            src={card.image}
+                            alt={card.name}
+                            className="h-full w-full object-cover object-top transition-transform duration-500 hover:scale-105"
+                          />
+                        </div>
+                        <div className="flex-1 p-5 flex flex-col justify-between">
+                          <div>
+                            <span className="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-800 mb-2">
+                              Co-Opted Member
+                            </span>
+                            <h3 className="text-xl font-bold text-gray-900 leading-tight">
+                              {card.name}
+                            </h3>
+                            <p className="mt-1 text-sm font-semibold text-[#066842]">
+                              {card.role}
+                            </p>
+                            {card.bio && (
+                              <p className="mt-3 text-sm text-gray-600 leading-relaxed">
+                                {card.bio}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Bullets List (e.g., P3 Project TutorED Details) */}
+                {section.bullets && (
+                  <div className="my-6 rounded-xl border border-emerald-100 bg-[#f7faf8] p-5 sm:p-6 shadow-2xs">
+                    <ul className="space-y-2.5">
+                      {section.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="flex items-start gap-2.5 text-sm sm:text-base text-gray-800">
+                          <span className="mt-1.5 flex h-2 w-2 shrink-0 rounded-full bg-[#066842]" />
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
 
@@ -253,6 +323,23 @@ const GenericNewsArticle = ({ articleSlug, onNavigate }) => {
                     {para}
                   </p>
                 ))}
+
+                {/* Secondary Embedded Image for this section (e.g., 63, 64) */}
+                {section.embeddedImage2 && (
+                  <div className="my-6 overflow-hidden rounded-xl border border-gray-200/90 shadow-sm bg-gray-50">
+                    <img
+                      src={section.embeddedImage2.src}
+                      alt={section.embeddedImage2.alt || ''}
+                      className="w-full h-auto object-cover block"
+                      loading="lazy"
+                    />
+                    {section.embeddedImage2.caption && (
+                      <p className="px-4 py-2.5 text-xs text-gray-500 italic bg-gray-50/90 border-t border-gray-100">
+                        {section.embeddedImage2.caption}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Highlight Cards (e.g., N8 Donald First Places) */}
                 {section.highlightCards && (
