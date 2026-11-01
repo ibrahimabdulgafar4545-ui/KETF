@@ -318,7 +318,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
 
       <nav
         aria-label="Main navigation"
-        className="mx-auto grid max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-[1fr_auto_1fr] lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-8"
       >
         {/* Left: Logo - navigates to Home */}
         <div className="flex items-center justify-start">
@@ -473,7 +473,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle navigation menu"
-            className="inline-flex cursor-pointer items-center justify-center rounded-lg p-2 text-gray-700 hover:bg-gray-100 hover:text-[#0a7a3e] lg:hidden"
+            className="inline-flex cursor-pointer items-center justify-center rounded-xl p-2.5 text-[#066842] hover:bg-emerald-50 hover:text-[#b91c1c] active:scale-95 transition-all border border-emerald-100 shadow-2xs lg:hidden"
           >
             {mobileMenuOpen ? (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
@@ -558,9 +558,27 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
         </div>
       )}
 
+      {/* Mobile Backdrop Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 top-[70px] z-40 bg-black/40 backdrop-blur-xs lg:hidden animate-fade-in"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="border-b border-gray-200 bg-white lg:hidden max-h-[82vh] overflow-y-auto shadow-xl">
+        <div className="relative z-50 border-b border-gray-200 bg-white lg:hidden max-h-[85vh] overflow-y-auto shadow-2xl animate-in slide-in-from-top-2 duration-200">
+          {/* Subtle top header strip */}
+          <div className="flex items-center justify-between border-b border-gray-100 bg-[#f8faf9] px-4 py-2.5 text-xs text-gray-500">
+            <span className="font-bold text-[#066842] flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-[#066842]" />
+              KwaraETF Navigation
+            </span>
+            <span className="text-[11px] text-gray-400">Tap to expand sections</span>
+          </div>
+
           <ul className="divide-y divide-gray-100 px-4 py-2">
             {navLinks.map((item) => {
               const hasDropdown = Boolean(item.dropdown)
@@ -652,19 +670,22 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
             })}
           </ul>
 
-          {/* Mobile Donate / Support CTA */}
-          <div className="px-4 pt-1 pb-4 sm:hidden">
+          {/* Mobile Donate / Support CTA & Agency Info */}
+          <div className="px-4 pt-2 pb-5 border-t border-gray-100 mt-2 space-y-3">
             <a
               href="#donation"
               onClick={(e) => handleLinkClick(e, '#donation')}
-              className="flex w-full items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-5 py-2.5 text-[14.5px] font-medium tracking-wide text-white shadow-sm transition-colors hover:bg-[#055737]"
+              className="flex w-full items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-gradient-to-r from-[#066842] to-[#044c30] px-5 py-3 text-[14.5px] font-bold tracking-wide text-white shadow-md transition-all duration-200 hover:shadow-lg active:scale-98"
             >
-              <span>Donate / Support</span>
+              <span>Donate / Support KwaraETF</span>
               <svg className="h-5 w-5 shrink-0 text-[#c8b268]" viewBox="0 0 24 24" fill="currentColor">
                 <circle cx="13.5" cy="5.5" r="3" />
                 <path d="M20.6 12.2c-.5-.3-1.2-.2-1.6.2l-2.5 2.4H12c-.6 0-1-.4-1-1s.4-1 1-1h2.8c.7 0 1.2-.5 1.2-1.2s-.5-1.2-1.2-1.2H9.2c-1.3 0-2.5.5-3.4 1.4L4 13.6V19h9.8c1.1 0 2.1-.4 2.9-1.2l4.2-4c.5-.4.4-1.2-.3-1.6z" />
               </svg>
             </a>
+            <p className="text-center text-[11px] text-gray-400">
+              Kwara State Education Trust Fund &bull; Public Institution
+            </p>
           </div>
         </div>
       )}

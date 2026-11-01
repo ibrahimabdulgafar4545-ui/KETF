@@ -234,6 +234,7 @@ const AppLayout = () => {
 
       {/* Global Executive Footer */}
       <Footer onNavigate={navigate} />
+
     </div>
   )
 }
