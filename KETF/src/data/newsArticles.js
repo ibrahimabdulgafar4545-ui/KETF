@@ -25,6 +25,7 @@ export const newsArticles = [
       'Two years ago, I had the honour of being entrusted with the responsibility of serving as Chairman of the Kwara State Education Trust Fund. As I […]',
     shareUrl: 'https://kwaraetf.org/two-years-of-building-for-impact/',
   },
+  //cool
   {
     id: 'emir-of-lafiagi-commits-20-million-to-drive-transformation-of-lafiagi-secondary-school',
     slug: '#news-emir-of-lafiagi-commits-20-million',
