@@ -558,27 +558,9 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
         </div>
       )}
 
-      {/* Mobile Backdrop Overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 top-[70px] z-40 bg-black/40 backdrop-blur-xs lg:hidden animate-fade-in"
-          onClick={() => setMobileMenuOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="relative z-50 border-b border-gray-200 bg-white lg:hidden max-h-[85vh] overflow-y-auto shadow-2xl animate-in slide-in-from-top-2 duration-200">
-          {/* Subtle top header strip */}
-          <div className="flex items-center justify-between border-b border-gray-100 bg-[#f8faf9] px-4 py-2.5 text-xs text-gray-500">
-            <span className="font-bold text-[#066842] flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#066842]" />
-              KwaraETF Navigation
-            </span>
-            <span className="text-[11px] text-gray-400">Tap to expand sections</span>
-          </div>
-
+        <div className="border-b border-gray-200 bg-white lg:hidden max-h-[82vh] overflow-y-auto shadow-xl">
           <ul className="divide-y divide-gray-100 px-4 py-2">
             {navLinks.map((item) => {
               const hasDropdown = Boolean(item.dropdown)
