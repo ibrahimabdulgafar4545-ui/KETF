@@ -541,24 +541,9 @@ const EoiLafiagiSchool = ({ onNavigate }) => {
         />
 
         <div className="relative mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-wider text-emerald-100/85 uppercase">
-            <button
-              type="button"
-              onClick={() => onNavigate && onNavigate('#home')}
-              className="cursor-pointer transition-colors hover:text-[#f3df9d]"
-            >
-              Home
-            </button>
-            <span>/</span>
-            <span className="text-emerald-100">Opportunities</span>
-            <span>/</span>
-            <span className="text-[#f3df9d]">Expression of Interest</span>
-          </div>
+          
 
-          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#c8b268]/40 bg-white/10 px-3.5 py-1 text-xs font-semibold text-[#f3df9d] backdrop-blur-xs">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Open Procurement Notice &bull; Call for Expressions of Interest</span>
-          </div>
+          
 
           <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-[40px] lg:leading-[1.18]">
             Consultancy Services for Lafiagi Secondary School Needs Assessment,
@@ -765,20 +750,33 @@ const EoiLafiagiSchool = ({ onNavigate }) => {
             </div>
           </div>
 
-          {/* How to Apply Banner */}
-          <div className="rounded-2xl border border-[#066842]/20 bg-[#072417] p-6 sm:p-8 text-white">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-              <div className="space-y-3 max-w-2xl">
-                <h2 className="text-lg sm:text-xl font-bold text-[#f3df9d]">
-                  How to Apply
-                </h2>
-                <ul className="space-y-2 text-sm text-gray-200 leading-relaxed">
+          {/* How to Apply Banner - Executive KwaraETF Rich Gradient */}
+          <div className="relative overflow-hidden rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-[#064e3b] via-[#066842] to-[#044c30] p-6 sm:p-8 text-white shadow-lg">
+            {/* Ambient luxury glows */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full bg-[#c8b268]/20 blur-3xl"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-emerald-400/15 blur-3xl"
+            />
+
+            <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-3.5 max-w-2xl">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#c8b268] animate-pulse" />
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#f3df9d]">
+                    How to Apply
+                  </h2>
+                </div>
+                <ul className="space-y-2.5 text-sm text-emerald-50/95 leading-relaxed">
                   <li className="flex items-start gap-2.5">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#c8b268]" />
                     <span>
                       Interested and eligible applicants should submit their
                       applications electronically through the official KwaraETF
-                      website
+                      website.
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
@@ -799,17 +797,17 @@ const EoiLafiagiSchool = ({ onNavigate }) => {
                 </ul>
               </div>
 
-              <div className="shrink-0 rounded-xl border border-white/15 bg-white/10 px-5 py-4 backdrop-blur-xs">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-200">
+              <div className="relative shrink-0 rounded-xl border border-white/20 bg-black/25 px-5 py-4 backdrop-blur-md shadow-inner">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#c8b268]">
                   Application Deadline
                 </p>
-                <p className="mt-1 text-base sm:text-lg font-extrabold text-white">
+                <p className="mt-1.5 text-base sm:text-lg font-extrabold text-white tracking-tight">
                   Friday, 27 November 2026
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 border-t border-white/10 pt-4 text-xs sm:text-sm font-medium text-[#c8b268]">
+            <div className="relative mt-6 border-t border-white/15 pt-4 text-xs sm:text-sm font-semibold text-[#f3df9d]">
               Kwara State Education Trust Fund (KwaraETF) Investing in
               Education. Building the Future.
             </div>
@@ -863,84 +861,6 @@ const EoiLafiagiSchool = ({ onNavigate }) => {
                 className="h-full rounded-full bg-gradient-to-r from-[#066842] via-[#138a59] to-[#c8b268] transition-all duration-500 ease-out"
                 style={{ width: `${Math.max(progressPercent, 4)}%` }}
               />
-            </div>
-
-            {/* Section Pills */}
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
-              {FORM_SECTIONS.map((sec, idx) => {
-                const isCurrent = idx === currentStep
-                const isDone = Boolean(completedSteps[idx])
-                const isClickable =
-                  idx < currentStep || Boolean(completedSteps[idx - 1])
-
-                return (
-                  <button
-                    key={sec.id}
-                    type="button"
-                    onClick={() => handleStepTabClick(idx)}
-                    disabled={(!isClickable && !isCurrent) || isSubmitting || isSubmitted}
-                    className={`flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all ${
-                      isCurrent
-                        ? 'border-[#066842] bg-white shadow-xs ring-2 ring-[#066842]/10 cursor-pointer'
-                        : isDone
-                        ? 'border-emerald-200 bg-emerald-50/60 text-emerald-900 hover:bg-emerald-50 cursor-pointer'
-                        : 'border-gray-200/80 bg-gray-50/70 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    <span
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                        isCurrent
-                          ? 'bg-[#066842] text-white'
-                          : isDone
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-gray-200 text-gray-500'
-                      }`}
-                    >
-                      {isDone && !isCurrent ? (
-                        <svg
-                          className="h-3.5 w-3.5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="2.8"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M4.5 12.75l6 6 9-13.5"
-                          />
-                        </svg>
-                      ) : (
-                        sec.id
-                      )}
-                    </span>
-                    <div className="min-w-0">
-                      <p
-                        className={`text-[10px] font-bold uppercase tracking-wider ${
-                          isCurrent
-                            ? 'text-[#066842]'
-                            : isDone
-                            ? 'text-emerald-700'
-                            : 'text-gray-400'
-                        }`}
-                      >
-                        {sec.id === 'G' ? 'Final Step' : `Section ${sec.id}`}
-                      </p>
-                      <p
-                        className={`truncate text-xs font-semibold ${
-                          isCurrent
-                            ? 'text-gray-900'
-                            : isDone
-                            ? 'text-gray-700'
-                            : 'text-gray-400'
-                        }`}
-                      >
-                        {sec.shortLabel}
-                      </p>
-                    </div>
-                  </button>
-                )
-              })}
             </div>
           </div>
 
