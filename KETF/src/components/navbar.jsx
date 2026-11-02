@@ -504,9 +504,7 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                   {activeMegaItem.label} Directory
                 </span>
               </div>
-              <span className="text-xs text-gray-400">
-                Official KwaraETF Resources
-              </span>
+              
             </div>
 
             {/* Dynamic Sub-links Grid */}
