@@ -264,6 +264,29 @@ const navLinks = [
       },
     ],
   },
+  {
+    label: 'Opportunities',
+    href: '#opportunities',
+    megaTitle: 'Opportunities',
+    megaDescription:
+      'Explore active procurement calls, expressions of interest, consultancy tenders, and career opportunities.',
+    megaCta: { label: 'View Opportunities', href: '#opportunities' },
+    dropdown: [
+      {
+        label:
+          'Expression of interest: Consultancy Services for Lafiagi Secondary School',
+        href: '#eoi-lafiagi-secondary-school',
+        desc: 'Official call for qualified consultants & technical advisory proposals',
+        icon: (
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        ),
+      },
+    ],
+  },
 ]
 
 const Navbar = ({ activeRoute = '#home', onNavigate }) => {
@@ -273,7 +296,8 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
   const headerRef = useRef(null)
 
   const activeMegaItem = navLinks.find(
-    (item) => item.dropdown && item.label === openDropdown
+    (item) =>
+      item.dropdown && item.dropdown.length > 0 && item.label === openDropdown
   )
 
   const handleLinkClick = (e, href) => {
@@ -318,10 +342,10 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
 
       <nav
         aria-label="Main navigation"
-        className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
       >
         {/* Left: Logo - navigates to Home */}
-        <div className="flex items-center justify-start">
+        <div className="flex shrink-0 items-center justify-start">
           <a
             href="#home"
             onClick={(e) => handleLinkClick(e, '#home')}
@@ -331,20 +355,36 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
             <img
               src="/KETF%20logo.png"
               alt="Kwara State Education Trust Fund"
-              className="h-12 w-auto sm:h-14"
+              className="h-11 w-auto sm:h-13 xl:h-14"
             />
           </a>
         </div>
 
-        {/* Center: 5 Main Navigation Links */}
-        <ul className="hidden lg:flex lg:items-stretch lg:justify-center">
-          {navLinks.map((item, index) => {
-            const hasDropdown = Boolean(item.dropdown)
+        {/* Center: 6 Main Navigation Links */}
+        <ul className="hidden lg:flex lg:items-center lg:justify-center lg:gap-1 xl:gap-2">
+          {navLinks.map((item) => {
+            const hasDropdown = Boolean(
+              item.dropdown && item.dropdown.length > 0
+            )
             const isOpen = openDropdown === item.label
-            const isActiveParent =
-              activeRoute === item.href ||
-              (hasDropdown &&
-                item.dropdown.some((sub) => sub.href === activeRoute))
+            const isHome = item.href === '/'
+            const isActiveParent = isHome
+              ? activeRoute === '#home' || activeRoute === '/'
+              : activeRoute === item.href ||
+                (hasDropdown &&
+                  item.dropdown.some((sub) => sub.href === activeRoute))
+
+            const navItemClass = `group relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap px-2.5 xl:px-3.5 py-6 text-[13.5px] xl:text-[14.5px] font-semibold leading-none transition-colors ${
+              isOpen || isActiveParent
+                ? 'text-[#b91c1c]'
+                : 'text-[#066842] hover:text-[#b91c1c]'
+            }`
+
+            const indicatorClass = `absolute inset-x-2.5 xl:inset-x-3.5 bottom-0 h-0.5 rounded-full bg-[#b91c1c] transition-all duration-200 ${
+              isOpen || isActiveParent
+                ? 'scale-x-100 opacity-100'
+                : 'scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-100'
+            }`
 
             return (
               <li
@@ -354,11 +394,6 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                   setOpenDropdown(hasDropdown ? item.label : null)
                 }
               >
-                {/* Subtle vertical divider between items */}
-                {index > 0 && (
-                  <span aria-hidden="true" className="h-5 w-px bg-gray-100" />
-                )}
-
                 {hasDropdown ? (
                   <button
                     type="button"
@@ -368,79 +403,28 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                       )
                     }
                     aria-expanded={isOpen}
-                    className={`relative inline-flex cursor-pointer items-center gap-1.5 px-5 py-6 text-[14.5px] font-semibold transition-colors ${
-                      isOpen || isActiveParent
-                        ? 'text-[#b91c1c]'
-                        : 'text-[#066842] hover:text-[#b91c1c]'
-                    }`}
+                    className={navItemClass}
                   >
                     <span>{item.label}</span>
-                    <svg
-                      className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180 text-[#b91c1c]' : 'opacity-85'
-                      }`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2.4"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-
-                    {/* Active / Open Bottom Indicator Bar */}
-                    <span
-                      aria-hidden="true"
-                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#b91c1c] transition-all duration-200 ${
-                        isOpen || isActiveParent
-                          ? 'scale-x-100 opacity-100'
-                          : 'scale-x-0 opacity-0'
-                      }`}
-                    />
+                    <span aria-hidden="true" className={indicatorClass} />
                   </button>
-                ) : item.href === '/' ? (
+                ) : isHome ? (
                   <Link
                     to="/"
                     onClick={(e) => handleLinkClick(e, '#home')}
-                    className={`relative px-5 py-6 text-[14.5px] font-semibold transition-colors ${
-                      activeRoute === '#home' || activeRoute === '/'
-                        ? 'text-[#b91c1c]'
-                        : 'text-[#066842] hover:text-[#b91c1c]'
-                    }`}
+                    className={navItemClass}
                   >
-                    {item.label}
-                    <span
-                      aria-hidden="true"
-                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#b91c1c] transition-all duration-200 ${
-                        activeRoute === '#home' || activeRoute === '/'
-                          ? 'scale-x-100 opacity-100'
-                          : 'scale-x-0 opacity-0'
-                      }`}
-                    />
+                    <span>{item.label}</span>
+                    <span aria-hidden="true" className={indicatorClass} />
                   </Link>
                 ) : (
                   <a
                     href={item.href}
                     onClick={(e) => handleLinkClick(e, item.href)}
-                    className={`relative px-5 py-6 text-[14.5px] font-semibold transition-colors ${
-                      isActiveParent
-                        ? 'text-[#b91c1c]'
-                        : 'text-[#066842] hover:text-[#b91c1c]'
-                    }`}
+                    className={navItemClass}
                   >
-                    {item.label}
-                    <span
-                      aria-hidden="true"
-                      className={`absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-[#b91c1c] transition-all duration-200 ${
-                        isActiveParent
-                          ? 'scale-x-100 opacity-100'
-                          : 'scale-x-0 opacity-0'
-                      }`}
-                    />
+                    <span>{item.label}</span>
+                    <span aria-hidden="true" className={indicatorClass} />
                   </a>
                 )}
               </li>
@@ -449,11 +433,11 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
         </ul>
 
         {/* Right: Donate CTA + Mobile Hamburger */}
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex shrink-0 items-center justify-end gap-3">
           <a
             href="#donation"
             onClick={(e) => handleLinkClick(e, '#donation')}
-            className="group hidden items-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-5 py-2 text-[14.5px] font-medium tracking-wide text-white shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#055737] hover:shadow-md active:translate-y-0 sm:inline-flex"
+            className="group hidden shrink-0 whitespace-nowrap items-center gap-2 rounded-full border border-[#6a8752] bg-[#066842] px-4 xl:px-5 py-2.5 text-[13.5px] xl:text-[14px] font-medium leading-none tracking-wide text-white shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#055737] hover:shadow-md active:translate-y-0 sm:inline-flex"
           >
             <span>Donate / Support</span>
             <svg
@@ -504,13 +488,15 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                   {activeMegaItem.label} Directory
                 </span>
               </div>
-              
             </div>
 
             {/* Dynamic Sub-links Grid */}
             <div
               className={`mx-auto grid gap-4.5 ${
-                activeMegaItem.dropdown.length === 4
+                activeMegaItem.dropdown.length === 1
+                  ? 'max-w-2xl grid-cols-1'
+                  : activeMegaItem.dropdown.length === 2 ||
+                    activeMegaItem.dropdown.length === 4
                   ? 'max-w-4xl grid-cols-1 sm:grid-cols-2'
                   : activeMegaItem.dropdown.length === 6
                   ? 'max-w-6xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
@@ -561,7 +547,9 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
         <div className="border-b border-gray-200 bg-white lg:hidden max-h-[82vh] overflow-y-auto shadow-xl">
           <ul className="divide-y divide-gray-100 px-4 py-2">
             {navLinks.map((item) => {
-              const hasDropdown = Boolean(item.dropdown)
+              const hasDropdown = Boolean(
+                item.dropdown && item.dropdown.length > 0
+              )
               const isMobileOpen = mobileOpenDropdown === item.label
 
               if (hasDropdown) {
