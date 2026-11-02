@@ -43,12 +43,6 @@ const socialLinksCol1 = [
   },
 ]
 
-const socialLinksBottom = [
-  socialLinksCol1[0], // Facebook
-  socialLinksCol1[1], // X
-  socialLinksCol1[3], // LinkedIn
-  socialLinksCol1[2], // Instagram
-]
 
 const Footer = ({ onNavigate }) => {
   const scrollToTop = () => {
@@ -287,36 +281,21 @@ const Footer = ({ onNavigate }) => {
             &copy; 2026 Kwara State Education Trust Fund. All rights reserved.
           </p>
 
-          <div className="flex items-center gap-4">
-            {/* Social Icons in Bottom bar with Original Brand Colors */}
-            <div className="flex items-center gap-3.5">
-              {socialLinksBottom.map((item) => (
-                <a
-                  key={'bottom-' + item.name}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.name}
-                  style={{ color: item.color }}
-                  className="transition-transform duration-200 hover:scale-125 hover:opacity-85"
-                >
-                  {item.icon}
-                </a>
-              ))}
-            </div>
-
-            {/* Back to Top Chevron */}
-            <button
-              onClick={scrollToTop}
-              className="ml-2 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 hover:text-white transition-colors cursor-pointer"
-              title="Back to top"
-              aria-label="Back to top"
+          <button
+            onClick={scrollToTop}
+            className="group inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-2 text-xs font-medium text-gray-300 transition-all duration-200 hover:bg-[#c8b268] hover:text-[#072417] hover:border-[#c8b268] cursor-pointer"
+          >
+            <span>Back to top</span>
+            <svg
+              className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth="2.2"
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-              </svg>
-            </button>
-          </div>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+            </svg>
+          </button>
         </div>
 
       </div>
