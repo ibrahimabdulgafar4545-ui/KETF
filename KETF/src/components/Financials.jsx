@@ -115,7 +115,7 @@ const Financials = () => {
             </div>
 
             {/* Right Information & Action */}
-            <div className="flex flex-col justify-center p-7 sm:p-10 lg:col-span-7 lg:p-12">
+            <div className="flex flex-col justify-center p-5 sm:p-10 lg:col-span-7 lg:p-12">
               <div className="flex items-center gap-3">
                 <span className="inline-flex items-center border border-[#c8b268]/60 bg-[#fdf8eb] px-3.5 py-1 text-xs font-semibold tracking-widest text-[#8c6d23] uppercase">
                   Annual Statement
@@ -137,7 +137,7 @@ const Financials = () => {
                   href={downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group/btn inline-flex items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[#991b1b] hover:bg-[#b31b1b] hover:shadow-md"
+                  className="group/btn w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[#991b1b] hover:bg-[#b31b1b] hover:shadow-md cursor-pointer text-center"
                 >
                   <span className="relative flex h-4.5 w-4.5 items-center justify-center">
                     <svg

@@ -206,7 +206,7 @@ const QuarterlyReports = () => {
                   href={report.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group/btn inline-flex items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#991b1b] hover:bg-[#b31b1b] hover:shadow-md"
+                  className="group/btn w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#991b1b] hover:bg-[#b31b1b] hover:shadow-md cursor-pointer text-center"
                 >
                   <span className="relative flex h-4 w-4 items-center justify-center">
                     <svg

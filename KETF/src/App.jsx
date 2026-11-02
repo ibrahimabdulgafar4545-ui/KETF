@@ -52,6 +52,8 @@ import NewsSection from './components/NewsSection.jsx'
 import NewsletterSection from './components/NewsletterSection.jsx'
 import PillarsSection from './components/PillarsSection.jsx'
 import Footer from './components/Footer.jsx'
+import MobileSimulator from './components/MobileSimulator.jsx'
+import AdminDashboard from './components/AdminDashboard.jsx'
 import ReadMore from './pages/ReadMore.jsx'
 import ContactPage from './pages/ContactPage.jsx'
 
@@ -75,7 +77,9 @@ const AppLayout = () => {
 
   // Derive the active page cleanly during render
   let route = hashRoute
-  if (!route || route === '#home' || route === '#') {
+  if (location.pathname === '/admin' || hashRoute === '#admin') {
+    route = '#admin'
+  } else if (!route || route === '#home' || route === '#') {
     if (location.pathname === '/read-more' || location.pathname === '/about') {
       route = '#about'
     } else if (location.pathname === '/contact') {
@@ -113,6 +117,15 @@ const AppLayout = () => {
       routerNavigate(target)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
+  }
+
+  if (route === '#admin') {
+    return (
+      <div className="min-h-screen bg-background">
+        <AdminDashboard onNavigate={navigate} />
+        <MobileSimulator activeRoute="#admin" />
+      </div>
+    )
   }
 
   return (
@@ -234,6 +247,9 @@ const AppLayout = () => {
 
       {/* Global Executive Footer */}
       <Footer onNavigate={navigate} />
+
+      {/* Floating Mobile Simulator Tool */}
+      <MobileSimulator activeRoute={route} />
     </div>
   )
 }
