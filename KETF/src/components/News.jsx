@@ -352,6 +352,8 @@ const NewsArticleCard = ({ article, onSelectArticle }) => {
       </div>
     </article>
   )
+  6: newsArticlesPage6,
+  7: newsArticlesPage7,
 }
 
 const CATEGORIES = [
@@ -399,6 +401,26 @@ const News = ({ onNavigate, initialPage = 1 }) => {
       } else {
         window.location.hash = article.slug
       }
+  const handleOpenArticle = (e, article) => {
+    if (e && e.preventDefault) e.preventDefault()
+    const target = article.targetRoute || article.slug
+    if (target) {
+      if (onNavigate) {
+        onNavigate(target)
+      } else {
+        window.location.hash = target
+      }
+    } else {
+      setReadingArticle(article)
+    }
+  }
+
+  const handleSelectArticle = (article) => {
+    const target = article.targetRoute || article.slug || '#news'
+    if (onNavigate) {
+      onNavigate(target)
+    } else {
+      window.location.hash = target
     }
   }
 
@@ -408,10 +430,14 @@ const News = ({ onNavigate, initialPage = 1 }) => {
       if (onNavigate) onNavigate('#news')
       else window.location.hash = '#news'
     } else {
-      if (onNavigate) onNavigate(`#news-page-${pageNum}`)
-      else window.location.hash = `#news-page-${pageNum}`
+      if (onNavigate) onNavigate('#news-page-' + pageNum)
+      else window.location.hash = '#news-page-' + pageNum
     }
     if (listTopRef.current) {
+    const feedHeader = document.getElementById('news-feed-top')
+    if (feedHeader) {
+      feedHeader.scrollIntoView({ behavior: 'smooth' })
+    } else if (listTopRef.current) {
       listTopRef.current.scrollIntoView({ behavior: 'smooth' })
     } else {
       window.scrollTo({ top: 380, behavior: 'smooth' })
@@ -453,6 +479,11 @@ const News = ({ onNavigate, initialPage = 1 }) => {
             </h1>
             <div className="mx-auto mt-3 sm:mt-4 h-1 w-16 sm:w-20 rounded-full bg-gradient-to-r from-[#c8b268] to-[#f3df9d]" />
             <p className="mt-4 sm:mt-5 text-sm sm:text-lg leading-relaxed text-emerald-50/90 max-w-2xl mx-auto">
+            <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              News &amp; Announcements
+            </h1>
+            <div className="mx-auto mt-3 h-1 w-16 sm:w-20 rounded-full bg-gradient-to-r from-[#c8b268] to-[#f3df9d]" />
+            <p className="mt-3 text-sm leading-relaxed text-emerald-50/90 sm:text-lg sm:mt-5">
               Official updates, special memorandums, press briefings, and stories from the Kwara State Education Trust Fund.
             </p>
           </div>
@@ -462,6 +493,9 @@ const News = ({ onNavigate, initialPage = 1 }) => {
       <div ref={listTopRef} className="mx-auto mt-8 sm:mt-12 max-w-5xl px-3.5 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
         {/* News Feed Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 border-b border-gray-200 pb-4 sm:pb-5">
+      <div id="news-feed-top" ref={listTopRef} className="mx-auto mt-8 sm:mt-12 max-w-5xl px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
+        {/* News Feed Header */}
+        <div className="flex flex-row items-center justify-between gap-3 border-b border-gray-200 pb-4">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
               Latest Publications
@@ -471,6 +505,11 @@ const News = ({ onNavigate, initialPage = 1 }) => {
             </p>
           </div>
           <span className="self-start sm:self-auto rounded-full bg-[#fdf8eb] border border-[#c8b268]/50 px-3 py-1 text-xs font-bold text-[#8c6d23] shadow-2xs">
+            <p className="mt-0.5 text-xs sm:text-sm text-gray-600 line-clamp-1 sm:line-clamp-none">
+              Stay informed with official dispatches, educational reforms, and stories from KwaraETF.
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-[#fdf8eb] border border-[#c8b268]/50 px-3 py-1 text-[11px] sm:text-xs font-bold text-[#8c6d23]">
             Page {currentPage} of 7
           </span>
         </div>
@@ -496,6 +535,8 @@ const News = ({ onNavigate, initialPage = 1 }) => {
         {/* Current Page Articles */}
         {displayedArticles.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 sm:p-12 text-center shadow-2xs">
+        {currentArticles.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-gray-200 bg-white p-8 sm:p-12 text-center shadow-2xs">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-[#066842]">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -525,6 +566,117 @@ const News = ({ onNavigate, initialPage = 1 }) => {
                 article={article}
                 onSelectArticle={handleSelectArticle}
               />
+            {currentArticles.map((article, idx) => (
+              <article
+                key={article.id || idx}
+                className="group border border-gray-200 bg-white shadow-xs transition-all duration-200 hover:border-[#c8b268]/80 hover:shadow-md overflow-hidden rounded-xl sm:rounded-none"
+              >
+                {/* Subtle top gradient bar */}
+                <div
+                  className={`h-1.5 w-full bg-gradient-to-r ${
+                    idx % 2 === 0
+                      ? 'from-[#066842] via-[#c8b268] to-[#084d49]'
+                      : 'from-[#c8b268] via-[#066842] to-[#c8b268]'
+                  }`}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-8 p-4 sm:p-9 lg:p-10 items-start">
+                  {/* Beside Image */}
+                  <div className="md:col-span-5 w-full">
+                    <div
+                      onClick={(e) => handleOpenArticle(e, article)}
+                      className="relative overflow-hidden border border-gray-200 bg-gray-50 shadow-2xs cursor-pointer group/img rounded-lg sm:rounded-sm aspect-[16/10] sm:aspect-auto"
+                    >
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="w-full h-full sm:h-auto sm:max-h-[360px] object-cover object-top transition-transform duration-300 group-hover/img:scale-102"
+                        loading="lazy"
+                      />
+                      {article.badge && (
+                        <div className="sm:hidden absolute bottom-2 left-2 rounded bg-black/75 backdrop-blur-xs px-2 py-0.5 text-[10px] font-semibold text-white">
+                          {article.badge}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Content Details */}
+                  <div className="md:col-span-7 flex flex-col justify-between h-full">
+                    <div>
+                      {/* Date & Published By & Categories Bar */}
+                      <div className="flex flex-wrap items-center gap-y-1.5 gap-x-2 text-[11px] sm:text-xs text-gray-500 pb-2.5 border-b border-gray-100">
+                        {article.date && (
+                          <>
+                            <div className="flex items-center gap-1 font-medium text-gray-600">
+                              <svg
+                                className="h-3 w-3 text-[#066842]"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="2"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
+                              <span>{article.date}</span>
+                            </div>
+                            <span>&bull;</span>
+                          </>
+                        )}
+
+                        <div className="flex items-center gap-1">
+                          <span>Published by</span>
+                          <a
+                            href="#"
+                            onClick={(e) => e.preventDefault()}
+                            className="font-bold text-[#066842] hover:text-[#b91c1c] hover:underline cursor-pointer transition-colors"
+                          >
+                            {article.publishedBy || 'KwaraETF'}
+                          </a>
+                        </div>
+
+                        <span>&bull;</span>
+
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-semibold text-gray-700">
+                          {article.category || 'Categories'}
+                        </span>
+                      </div>
+
+                      {/* Article Title */}
+                      <h3 className="mt-3 text-lg sm:text-2xl font-bold tracking-tight text-gray-900 leading-snug">
+                        <a
+                          href={article.slug || '#'}
+                          onClick={(e) => handleOpenArticle(e, article)}
+                          className="hover:text-[#066842] hover:underline cursor-pointer transition-colors"
+                        >
+                          {article.title}
+                        </a>
+                      </h3>
+
+                      {/* Body Excerpt */}
+                      <p className="mt-2.5 text-[14px] leading-relaxed text-gray-700 sm:mt-4 sm:text-[16px] sm:leading-8">
+                        {article.excerpt}
+                      </p>
+                    </div>
+
+                    {/* Read More Button */}
+                    <div className="mt-5 sm:mt-8 pt-4 sm:pt-5 border-t border-gray-100 flex items-center justify-between">
+                      <a
+                        href={article.slug || '#'}
+                        onClick={(e) => handleOpenArticle(e, article)}
+                        className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-[#066842] bg-[#066842] px-5 py-2 sm:px-6 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#b31b1b] hover:border-[#b31b1b] hover:shadow-md cursor-pointer"
+                      >
+                        <span>Read more</span>
+                        <span>&rarr;</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </article>
             ))}
           </div>
         )}
@@ -597,11 +749,47 @@ const News = ({ onNavigate, initialPage = 1 }) => {
 
             {/* Numbered Controls */}
             <nav aria-label="News Pagination" className="flex items-center gap-1.5 sm:gap-2">
+        {/* Pagination Bar: Mobile Optimized Two-Row Layout, Desktop Single Row */}
+        <div className="pt-6 pb-4 border-t border-gray-200/90 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+          {/* Status info */}
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 font-medium">
+            <span className="inline-block h-2 w-2 rounded-full bg-[#066842]" />
+            <span>
+              Showing page <strong className="text-[#066842] font-bold">{currentPage}</strong> of <strong className="text-gray-800 font-bold">7</strong>
+            </span>
+          </div>
+
+          {/* Numbered & Prev/Next Controls */}
+          <nav aria-label="News Pagination" className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-2.5">
+            {/* Page Buttons: 1, 2, 3, 4, 5, 6, 7 */}
+            <div className="flex items-center justify-center gap-1 sm:gap-2 w-full sm:w-auto">
+              {[1, 2, 3, 4, 5, 6, 7].map((page) => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => handlePageChange(page)}
+                  className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 active:scale-95 cursor-pointer ${
+                    currentPage === page
+                      ? 'bg-[#066842] text-white shadow-sm ring-2 ring-[#c8b268]/50 ring-offset-1 border border-[#066842]'
+                      : 'border border-gray-200 bg-white text-gray-700 hover:border-[#066842]/60 hover:bg-emerald-50/50 hover:text-[#066842] shadow-2xs'
+                  }`}
+                  aria-current={currentPage === page ? 'page' : undefined}
+                  aria-label={`Page ${page}`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            {/* Prev & Next Buttons: Side-by-side on mobile, flanking on desktop */}
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              {/* Prev Button */}
               <button
                 type="button"
                 onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
                 className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-[#066842]/30 bg-white px-3.5 text-xs sm:text-sm font-bold text-[#066842] transition-all duration-200 hover:bg-[#066842] hover:text-white hover:border-[#066842] shadow-2xs disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
+                className="flex-1 sm:flex-none inline-flex h-9 sm:h-10 items-center justify-center gap-1.5 rounded-lg border border-[#066842]/30 bg-white px-3 sm:px-3.5 text-xs sm:text-sm font-bold text-[#066842] transition-all duration-200 hover:bg-[#066842] hover:text-white hover:border-[#066842] shadow-2xs disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
                 aria-label="Previous page"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -627,6 +815,10 @@ const News = ({ onNavigate, initialPage = 1 }) => {
                 </button>
               ))}
 
+                <span>Prev</span>
+              </button>
+
+              {/* Next Button */}
               <button
                 type="button"
                 onClick={() => handlePageChange(Math.min(7, currentPage + 1))}
@@ -635,12 +827,18 @@ const News = ({ onNavigate, initialPage = 1 }) => {
                 aria-label="Next page"
               >
                 <span>Next page</span>
+                className="flex-1 sm:flex-none inline-flex h-9 sm:h-10 items-center justify-center gap-1.5 rounded-lg border border-[#066842]/30 bg-white px-3 sm:px-3.5 text-xs sm:text-sm font-bold text-[#066842] transition-all duration-200 hover:bg-[#066842] hover:text-white hover:border-[#066842] shadow-2xs disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
+                aria-label="Next page"
+              >
+                <span>Next</span>
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                 </svg>
               </button>
             </nav>
           </div>
+            </div>
+          </nav>
         </div>
       </div>
 
@@ -652,6 +850,11 @@ const News = ({ onNavigate, initialPage = 1 }) => {
         >
           <div
             className="relative max-h-[92vh] sm:max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl sm:rounded-2xl bg-white p-5 sm:p-10 shadow-2xl border border-gray-200"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs animate-fade-in"
+          onClick={() => setReadingArticle(null)}
+        >
+          <div
+            className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-4 sm:p-10 shadow-2xl border border-gray-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top decorative gradient bar */}
@@ -664,6 +867,12 @@ const News = ({ onNavigate, initialPage = 1 }) => {
                   {readingArticle.category || 'News'}
                 </span>
                 <span className="text-[11px] sm:text-xs text-gray-500 font-medium">
+            <div className="flex items-start justify-between border-b border-gray-100 pb-3 sm:pb-4">
+              <div>
+                <span className="inline-block rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-bold text-[#066842]">
+                  {readingArticle.category}
+                </span>
+                <span className="ml-2 sm:ml-3 text-[11px] sm:text-xs text-gray-500 font-medium">
                   {readingArticle.date}
                 </span>
               </div>
@@ -671,6 +880,7 @@ const News = ({ onNavigate, initialPage = 1 }) => {
                 type="button"
                 onClick={() => setReadingArticle(null)}
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-[#b31b1b] transition-colors cursor-pointer active:scale-90"
+                className="rounded-full p-1.5 sm:p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors cursor-pointer"
                 aria-label="Close article modal"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -684,6 +894,11 @@ const News = ({ onNavigate, initialPage = 1 }) => {
             </h2>
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+            <h2 className="mt-3 text-xl sm:text-3xl font-extrabold text-gray-900 leading-snug sm:leading-tight">
+              {readingArticle.title}
+            </h2>
+
+            <div className="mt-2.5 sm:mt-4 flex items-center gap-2 text-[11px] sm:text-xs text-gray-500">
               <span>Published by</span>
               <span className="font-bold text-[#066842]">{readingArticle.publishedBy || 'KwaraETF'}</span>
               <span>&bull;</span>
@@ -691,6 +906,7 @@ const News = ({ onNavigate, initialPage = 1 }) => {
             </div>
 
             <div className="mt-5 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
+            <div className="mt-4 sm:mt-6 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
               <img
                 src={readingArticle.image}
                 alt={readingArticle.title}
@@ -716,6 +932,8 @@ const News = ({ onNavigate, initialPage = 1 }) => {
                   </div>
                 ))
               ) : readingArticle.fullContent ? (
+            <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4 text-gray-700 leading-relaxed text-sm sm:text-lg">
+              {readingArticle.fullContent ? (
                 readingArticle.fullContent.split('\n\n').map((paragraph, idx) => (
                   <p key={idx} className="leading-7 sm:leading-8">
                     {paragraph}
@@ -736,6 +954,16 @@ const News = ({ onNavigate, initialPage = 1 }) => {
               </button>
               <span className="text-xs text-gray-400 font-medium text-center">
                 Kwara State Education Trust Fund
+            <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setReadingArticle(null)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#066842] bg-[#066842] px-5 py-2 sm:px-6 sm:py-2.5 text-xs font-bold text-white transition-all hover:bg-[#b31b1b] hover:border-[#b31b1b] cursor-pointer"
+              >
+                <span>&larr; Return to News</span>
+              </button>
+              <span className="text-[11px] sm:text-xs text-gray-400 font-medium">
+                KwaraETF
               </span>
             </div>
           </div>

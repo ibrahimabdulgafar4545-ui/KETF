@@ -18,11 +18,11 @@ const Hero = () => {
       </div>
 
       {/* Centered Content */}
-      <div className="relative z-10 mx-auto max-w-5xl px-4 py-20 mt-27 text-center flex flex-col items-center">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 py-14 sm:py-20 mt-10 sm:mt-18 text-center flex flex-col items-center">
         {/* Main Heading with clean Plus Jakarta Sans typography */}
         <h1
           style={{ fontFamily: "'Plus Jakarta Sans', 'Poppins', sans-serif" }}
-          className="max-w-4xl text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-tight sm:leading-[1.16] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+          className="max-w-4xl text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-snug sm:leading-[1.16] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
         >
           Building the Future of Kwara Through Sustainable Investments in Quality Education
         </h1>

@@ -18,6 +18,7 @@ import PoliciesAndGuidelines from './components/PoliciesAndGuidelines.jsx'
 import AdministrativeFee from './components/AdministrativeFee.jsx'
 import Jobs from './components/Jobs.jsx'
 import FinanceManagerJob from './components/FinanceManagerJob.jsx'
+import EoiLafiagiSchool from './components/EoiLafiagiSchool.jsx'
 import Projects from './components/Projects.jsx'
 import TeachersLoungeInitiative from './components/TeachersLoungeInitiative.jsx'
 import ScholarshipsInitiative from './components/ScholarshipsInitiative.jsx'
@@ -166,6 +167,9 @@ const AppLayout = () => {
           <FinanceManagerJob onNavigate={navigate} />
         ) : route === '#jobs' ? (
           <Jobs onNavigate={navigate} />
+        ) : route === '#eoi-lafiagi-secondary-school' ||
+          route === '#opportunities' ? (
+          <EoiLafiagiSchool onNavigate={navigate} />
         ) : route === '#projects' ? (
           <Projects onNavigate={navigate} />
         ) : route === '#teachers-lounge-initiative' ? (
@@ -247,9 +251,6 @@ const AppLayout = () => {
 
       {/* Global Executive Footer */}
       <Footer onNavigate={navigate} />
-
-      {/* Floating Mobile Simulator Tool */}
-      <MobileSimulator activeRoute={route} />
     </div>
   )
 }

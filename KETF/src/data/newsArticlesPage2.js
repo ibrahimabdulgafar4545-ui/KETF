@@ -2,7 +2,7 @@
 
 export const newsArticlesPage2 = [
   {
-    "id": "kwara-ranks-first-in-northern-nigerian-in-trcn-teachers-qualifying-examination",
+    "id": "kwara-ranks-first-in-northern-nigerian-in-trcn-teachers-qualifying-examinations",
     "slug": "#news-kwara-ranks-first-trcn-teachers",
     "image": "/P1.png",
     "date": "August 18, 2026",
