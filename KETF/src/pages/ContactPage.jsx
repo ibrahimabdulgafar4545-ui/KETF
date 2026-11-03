@@ -30,24 +30,39 @@ const ContactPage = () => {
 
     setStatus('loading')
 
-    try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          subject: form.subject,
-          message: form.message,
-        }),
-      })
-
-      if (res.ok) {
-        setStatus('success')
-        setForm({ name: '', email: '', subject: '', message: '', honeypot: '' })
-      } else {
-        setStatus('error')
+        try {
+      // Save directly to localStorage for Admin Dashboard feed
+      const newInquiry = {
+        id: 'inq-' + Date.now(),
+        name: form.name.trim(),
+        email: form.email.trim(),
+        subject: form.subject?.trim() || 'General Inquiry',
+        message: form.message.trim(),
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+        status: 'Pending',
       }
+      try {
+        const stored = JSON.parse(localStorage.getItem('kwaraetf_inquiries') || '[]')
+        localStorage.setItem('kwaraetf_inquiries', JSON.stringify([newInquiry, ...stored]))
+      } catch (storageErr) {
+        console.error('LocalStorage write error:', storageErr)
+      }
+
+      if (FORMSPREE_ENDPOINT && !FORMSPREE_ENDPOINT.includes('YOUR_FORM_ID')) {
+        await fetch(FORMSPREE_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            subject: form.subject,
+            message: form.message,
+          }),
+        })
+      }
+
+      setStatus('success')
+      setForm({ name: '', email: '', subject: '', message: '', honeypot: '' })
     } catch {
       setStatus('error')
     }

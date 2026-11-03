@@ -53,7 +53,6 @@ import NewsSection from './components/NewsSection.jsx'
 import NewsletterSection from './components/NewsletterSection.jsx'
 import PillarsSection from './components/PillarsSection.jsx'
 import Footer from './components/Footer.jsx'
-import MobileSimulator from './components/MobileSimulator.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
 import ReadMore from './pages/ReadMore.jsx'
 import ContactPage from './pages/ContactPage.jsx'
@@ -124,7 +123,6 @@ const AppLayout = () => {
     return (
       <div className="min-h-screen bg-background">
         <AdminDashboard onNavigate={navigate} />
-        <MobileSimulator activeRoute="#admin" />
       </div>
     )
   }
