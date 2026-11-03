@@ -594,11 +594,11 @@ const Navbar = ({ activeRoute = '#home', onNavigate }) => {
                                 {subItem.icon}
                               </svg>
                             </div>
-                            <div>
-                              <p className="text-[14px] font-semibold text-gray-800">
+                            <div className="min-w-0">
+                              <p className="text-[13.5px] sm:text-[14px] leading-snug font-semibold text-gray-800">
                                 {subItem.label}
                               </p>
-                              <p className="text-[12px] text-gray-500">
+                              <p className="mt-0.5 text-[12px] leading-relaxed text-gray-500">
                                 {subItem.desc}
                               </p>
                             </div>
