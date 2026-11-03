@@ -1,80 +1,117 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
-const DONATION_DATA = [
-  {
-    id: 'don-1',
-    donor: "Alumni Class of '14",
-    tag: 'Alumni',
-    category: 'One-time',
-    context: '10-Year Reunion Drive • 8 mins ago',
-    allocation: 'STEM Lab Robotics Fund',
-    amount: '$12,500.00',
-    status: 'Completed',
-    initials: 'AC',
-    initialsBg: 'bg-slate-900 text-white',
-  },
-  {
-    id: 'don-2',
-    donor: 'HopeBridge PTA Council',
-    tag: 'Parent',
-    category: 'One-time',
-    context: 'Fall Book Fair Match • 32 mins ago',
-    allocation: 'Library Endowment',
-    amount: '$4,250.00',
-    status: 'Completed',
-    initials: 'PT',
-    initialsBg: 'bg-emerald-100 text-emerald-900',
-  },
-  {
-    id: 'don-3',
-    donor: 'Dr. Lawrence & May Chen',
-    tag: 'Endowment',
-    category: 'Monthly',
-    context: 'Tech Scholarship Sponsor • 2 hours ago',
-    allocation: 'First-Gen Tuition Aid',
-    amount: '$500.00',
-    frequency: '/mo',
-    status: 'Active Recurring',
-    initials: 'TS',
-    initialsBg: 'bg-amber-100 text-amber-900',
-  },
-  {
-    id: 'don-4',
-    donor: 'NextGen Computing Corp',
-    tag: 'Corporate',
-    category: 'Corporate',
-    context: 'Corporate STEM Grant • 4 hours ago',
-    allocation: 'Chromebook Lab Fleet',
-    amount: '$10,000.00',
-    status: 'Completed',
-    initials: 'NG',
-    initialsBg: 'bg-blue-100 text-blue-900',
-  },
-]
+const STORAGE_KEYS = {
+  DONATIONS: 'kwaraetf_donations_ledger',
+  INQUIRIES: 'kwaraetf_inquiries',
+  ANNOUNCEMENTS: 'kwaraetf_admin_announcements',
+  CAMPAIGN: 'kwaraetf_spotlight_campaign',
+}
+
+const DEFAULT_CAMPAIGN = {
+  title: 'Adopt-A-School & Public Infrastructure Drive',
+  description:
+    'Targeted interventions for classroom upgrades, digital learning tools, and school rehabilitation across Kwara State public schools.',
+  category: 'Infrastructure & Scholarships',
+  goal: 50000000, // ₦50M
+  daysRemaining: 45,
+  partnerCampus: 'Kwara State Public Primary & Secondary Schools',
+}
 
 export const AdminDashboard = ({ onNavigate }) => {
+  // Navigation & UI state
   const [activeMenu, setActiveMenu] = useState('overview')
   const [donationFilter, setDonationFilter] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
-  const [activeReceipt, setActiveReceipt] = useState(null)
   const [actionNotice, setActionNotice] = useState('')
+
+  // Modals state
+  const [showDonationModal, setShowDonationModal] = useState(false)
+  const [showInquiryModal, setShowInquiryModal] = useState(null)
+  const [showPostModal, setShowPostModal] = useState(false)
+  const [activeReceipt, setActiveReceipt] = useState(null)
+  const [editingCampaign, setEditingCampaign] = useState(false)
+
+  // Real Persistent State
+  const [donations, setDonations] = useState([])
+  const [inquiries, setInquiries] = useState([])
+  const [announcements, setAnnouncements] = useState([])
+  const [campaign, setCampaign] = useState(DEFAULT_CAMPAIGN)
+
+  // Form states for adding items
+  const [donationForm, setDonationForm] = useState({
+    donor: '',
+    category: 'One-time',
+    allocation: 'Scholarship Intervention Fund',
+    amount: '',
+    context: 'Direct Portal Contribution',
+    tag: 'Donor',
+  })
+
+  const [postForm, setPostForm] = useState({
+    title: '',
+    category: 'Official Announcement',
+    author: 'KwaraETF Secretariat',
+    summary: '',
+    status: 'Published',
+  })
+
+  const [campaignForm, setCampaignForm] = useState(DEFAULT_CAMPAIGN)
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedDonations = localStorage.getItem(STORAGE_KEYS.DONATIONS)
+      if (storedDonations) {
+        setDonations(JSON.parse(storedDonations))
+      }
+
+      const storedInquiries = localStorage.getItem(STORAGE_KEYS.INQUIRIES)
+      if (storedInquiries) {
+        setInquiries(JSON.parse(storedInquiries))
+      }
+
+      const storedAnnouncements = localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS)
+      if (storedAnnouncements) {
+        setAnnouncements(JSON.parse(storedAnnouncements))
+      }
+
+      const storedCampaign = localStorage.getItem(STORAGE_KEYS.CAMPAIGN)
+      if (storedCampaign) {
+        const parsed = JSON.parse(storedCampaign)
+        setCampaign(parsed)
+        setCampaignForm(parsed)
+      }
+    } catch (err) {
+      console.error('Failed to load local storage state:', err)
+    }
+  }, [])
+
+  // Sync helpers
+  const saveDonations = (items) => {
+    setDonations(items)
+    localStorage.setItem(STORAGE_KEYS.DONATIONS, JSON.stringify(items))
+  }
+
+  const saveInquiries = (items) => {
+    setInquiries(items)
+    localStorage.setItem(STORAGE_KEYS.INQUIRIES, JSON.stringify(items))
+  }
+
+  const saveAnnouncements = (items) => {
+    setAnnouncements(items)
+    localStorage.setItem(STORAGE_KEYS.ANNOUNCEMENTS, JSON.stringify(items))
+  }
+
+  const saveCampaign = (c) => {
+    setCampaign(c)
+    localStorage.setItem(STORAGE_KEYS.CAMPAIGN, JSON.stringify(c))
+  }
 
   const triggerNotice = (msg) => {
     setActionNotice(msg)
     setTimeout(() => setActionNotice(''), 3000)
   }
-
-  const filteredDonations = DONATION_DATA.filter((item) => {
-    const matchesFilter =
-      donationFilter === 'All' ? true : item.category === donationFilter
-    const matchesSearch =
-      searchQuery === ''
-        ? true
-        : item.donor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.allocation.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesFilter && matchesSearch
-  })
 
   const handleReturnHome = (e) => {
     if (e) e.preventDefault()
@@ -84,6 +121,168 @@ export const AdminDashboard = ({ onNavigate }) => {
       window.location.hash = '#home'
     }
   }
+
+  // Formatting helpers
+  const formatNaira = (val) => {
+    const num = Number(val) || 0
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      maximumFractionDigits: 0,
+    }).format(num)
+  }
+
+  // Calculated Real KPIs
+  const totalFundsRaised = useMemo(() => {
+    return donations.reduce((sum, item) => sum + (Number(item.numericAmount) || 0), 0)
+  }, [donations])
+
+  const uniqueDonorsCount = useMemo(() => {
+    const unique = new Set(donations.map((d) => d.donor?.trim().toLowerCase()).filter(Boolean))
+    return unique.size
+  }, [donations])
+
+  const unreadInquiriesCount = useMemo(() => {
+    return inquiries.filter((inq) => inq.status !== 'Resolved').length
+  }, [inquiries])
+
+  // Filtered donations list
+  const filteredDonations = useMemo(() => {
+    return donations.filter((item) => {
+      const matchesFilter =
+        donationFilter === 'All' ? true : item.category === donationFilter
+      const q = searchQuery.toLowerCase().trim()
+      const matchesSearch =
+        q === ''
+          ? true
+          : (item.donor || '').toLowerCase().includes(q) ||
+            (item.allocation || '').toLowerCase().includes(q)
+      return matchesFilter && matchesSearch
+    })
+  }, [donations, donationFilter, searchQuery])
+
+  // Add donation handler
+  const handleAddDonation = (e) => {
+    e.preventDefault()
+    if (!donationForm.donor.trim() || !donationForm.amount) {
+      triggerNotice('Please provide a donor name and amount')
+      return
+    }
+
+    const cleanNum = Number(String(donationForm.amount).replace(/[^0-9.]/g, '')) || 0
+    const initials = donationForm.donor
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0].toUpperCase())
+      .join('')
+
+    const newRecord = {
+      id: 'don-' + Date.now(),
+      donor: donationForm.donor.trim(),
+      tag: donationForm.tag || 'Donor',
+      category: donationForm.category,
+      context: donationForm.context || 'Direct Contribution',
+      allocation: donationForm.allocation,
+      amount: formatNaira(cleanNum),
+      numericAmount: cleanNum,
+      status: 'Verified',
+      date: new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      }),
+      initials: initials || 'KW',
+      initialsBg: 'bg-emerald-800 text-white',
+    }
+
+    const updated = [newRecord, ...donations]
+    saveDonations(updated)
+    setDonationForm({
+      donor: '',
+      category: 'One-time',
+      allocation: 'Scholarship Intervention Fund',
+      amount: '',
+      context: 'Direct Portal Contribution',
+      tag: 'Donor',
+    })
+    setShowDonationModal(false)
+    triggerNotice(`Logged ${formatNaira(cleanNum)} donation from ${newRecord.donor}`)
+  }
+
+  // Delete donation handler
+  const handleDeleteDonation = (id) => {
+    if (window.confirm('Are you sure you want to delete this donation record?')) {
+      const updated = donations.filter((d) => d.id !== id)
+      saveDonations(updated)
+      triggerNotice('Donation record removed')
+    }
+  }
+
+  // Add announcement handler
+  const handleAddPost = (e) => {
+    e.preventDefault()
+    if (!postForm.title.trim()) {
+      triggerNotice('Please enter an announcement title')
+      return
+    }
+
+    const newPost = {
+      id: 'post-' + Date.now(),
+      title: postForm.title.trim(),
+      category: postForm.category,
+      author: postForm.author.trim() || 'KwaraETF Secretariat',
+      summary: postForm.summary.trim(),
+      date: new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      }),
+      status: postForm.status || 'Published',
+      reads: 0,
+    }
+
+    const updated = [newPost, ...announcements]
+    saveAnnouncements(updated)
+    setPostForm({
+      title: '',
+      category: 'Official Announcement',
+      author: 'KwaraETF Secretariat',
+      summary: '',
+      status: 'Published',
+    })
+    setShowPostModal(false)
+    triggerNotice('Announcement published to editorial queue')
+  }
+
+  // Delete announcement
+  const handleDeletePost = (id) => {
+    const updated = announcements.filter((p) => p.id !== id)
+    saveAnnouncements(updated)
+    triggerNotice('Announcement deleted')
+  }
+
+  // Inquiry actions
+  const handleResolveInquiry = (id) => {
+    const updated = inquiries.map((inq) =>
+      inq.id === id ? { ...inq, status: inq.status === 'Resolved' ? 'Pending' : 'Resolved' } : inq
+    )
+    saveInquiries(updated)
+    triggerNotice('Inquiry status updated')
+  }
+
+  const handleDeleteInquiry = (id) => {
+    const updated = inquiries.filter((inq) => inq.id !== id)
+    saveInquiries(updated)
+    if (showInquiryModal?.id === id) setShowInquiryModal(null)
+    triggerNotice('Inquiry removed')
+  }
+
+  // Campaign progress percentage
+  const campaignPercent = Math.min(
+    100,
+    Math.round(((totalFundsRaised || 0) / (campaign.goal || 1)) * 100)
+  )
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-800 antialiased flex flex-col selection:bg-emerald-500/20 selection:text-emerald-900">
@@ -119,17 +318,17 @@ export const AdminDashboard = ({ onNavigate }) => {
               className="flex items-center gap-3 text-left group cursor-pointer"
               title="Return to Public Website"
             >
-              <div className="h-10 w-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-                <span className="material-symbols-outlined text-[22px] text-emerald-400">
-                  school
+              <div className="h-10 w-10 rounded-xl bg-[#066842] flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                <span className="material-symbols-outlined text-[22px] text-[#c8b268]">
+                  account_balance
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-[15px] text-slate-900 tracking-tight leading-none group-hover:text-emerald-700 transition-colors">
-                  HopeBridge Academy
+                <span className="font-bold text-[15px] text-slate-900 tracking-tight leading-none group-hover:text-[#066842] transition-colors">
+                  KwaraETF Admin
                 </span>
                 <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-1">
-                  School &amp; Blog CMS
+                  Trust Fund Console
                 </span>
               </div>
             </button>
@@ -148,10 +347,10 @@ export const AdminDashboard = ({ onNavigate }) => {
           <div className="px-4 py-6">
             <div className="px-3 pb-3 flex items-center justify-between">
               <span className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
-                Main Menu
+                Management
               </span>
               <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
-                ADMIN
+                LIVE
               </span>
             </div>
 
@@ -169,30 +368,32 @@ export const AdminDashboard = ({ onNavigate }) => {
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
                 }`}
               >
-                <span className="material-symbols-outlined text-[20px]">
-                  dashboard
-                </span>
+                <span className="material-symbols-outlined text-[20px]">dashboard</span>
                 <span>Overview</span>
               </button>
 
-              {/* Donations & Alumni Pledges */}
+              {/* Donations & Endowments */}
               <button
                 type="button"
                 onClick={() => {
                   setActiveMenu('donations')
                   setMobileSidebarOpen(false)
-                  triggerNotice('Navigated to Donations Ledger')
                 }}
-                className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all text-left cursor-pointer text-sm ${
+                className={`flex items-center justify-between px-3.5 py-3 rounded-xl transition-all text-left cursor-pointer text-sm ${
                   activeMenu === 'donations'
                     ? 'bg-slate-900 text-white font-bold shadow-sm'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
                 }`}
               >
-                <span className="material-symbols-outlined text-[20px]">
-                  school
-                </span>
-                <span className="truncate">Donations &amp; Alumni Pledges</span>
+                <div className="flex items-center gap-3.5">
+                  <span className="material-symbols-outlined text-[20px]">payments</span>
+                  <span className="truncate">Donations &amp; Endowments</span>
+                </div>
+                {donations.length > 0 && (
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                    {donations.length}
+                  </span>
+                )}
               </button>
 
               {/* Inquiries */}
@@ -201,7 +402,6 @@ export const AdminDashboard = ({ onNavigate }) => {
                 onClick={() => {
                   setActiveMenu('inquiries')
                   setMobileSidebarOpen(false)
-                  triggerNotice('Opening Admissions Inquiries Feed')
                 }}
                 className={`flex items-center justify-between px-3.5 py-3 rounded-xl transition-all text-left cursor-pointer text-sm ${
                   activeMenu === 'inquiries'
@@ -210,34 +410,38 @@ export const AdminDashboard = ({ onNavigate }) => {
                 }`}
               >
                 <div className="flex items-center gap-3.5">
-                  <span className="material-symbols-outlined text-[20px]">
-                    contact_mail
-                  </span>
-                  <span className="truncate">Parent &amp; Student Inquiries</span>
+                  <span className="material-symbols-outlined text-[20px]">contact_mail</span>
+                  <span className="truncate">Citizen &amp; School Inquiries</span>
                 </div>
-                <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[11px] font-bold">
-                  14
-                </span>
+                {unreadInquiriesCount > 0 && (
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[11px] font-bold">
+                    {unreadInquiriesCount}
+                  </span>
+                )}
               </button>
 
-              {/* Blog Stories CMS */}
+              {/* Announcements & CMS */}
               <button
                 type="button"
                 onClick={() => {
                   setActiveMenu('blog')
                   setMobileSidebarOpen(false)
-                  triggerNotice('Opening School Stories & Editorial Queue')
                 }}
-                className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all text-left cursor-pointer text-sm ${
+                className={`flex items-center justify-between px-3.5 py-3 rounded-xl transition-all text-left cursor-pointer text-sm ${
                   activeMenu === 'blog'
                     ? 'bg-slate-900 text-white font-bold shadow-sm'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
                 }`}
               >
-                <span className="material-symbols-outlined text-[20px]">
-                  article
-                </span>
-                <span className="truncate">Blog &amp; School Stories CMS</span>
+                <div className="flex items-center gap-3.5">
+                  <span className="material-symbols-outlined text-[20px]">campaign</span>
+                  <span className="truncate">Announcements &amp; News</span>
+                </div>
+                {announcements.length > 0 && (
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
+                    {announcements.length}
+                  </span>
+                )}
               </button>
 
               {/* Campaigns */}
@@ -246,7 +450,6 @@ export const AdminDashboard = ({ onNavigate }) => {
                 onClick={() => {
                   setActiveMenu('campaigns')
                   setMobileSidebarOpen(false)
-                  triggerNotice('Campaigns & Scholarships Filtered')
                 }}
                 className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all text-left cursor-pointer text-sm ${
                   activeMenu === 'campaigns'
@@ -254,53 +457,27 @@ export const AdminDashboard = ({ onNavigate }) => {
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
                 }`}
               >
-                <span className="material-symbols-outlined text-[20px]">
-                  military_tech
-                </span>
-                <span className="truncate">Campaigns &amp; Scholarships</span>
-              </button>
-
-              {/* Settings */}
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveMenu('settings')
-                  setMobileSidebarOpen(false)
-                  triggerNotice('System Settings modal')
-                }}
-                className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all text-left cursor-pointer text-sm ${
-                  activeMenu === 'settings'
-                    ? 'bg-slate-900 text-white font-bold shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
-                }`}
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  settings
-                </span>
-                <span>Settings</span>
+                <span className="material-symbols-outlined text-[20px]">military_tech</span>
+                <span className="truncate">Spotlight Campaign</span>
               </button>
             </nav>
           </div>
         </div>
 
-        {/* Bottom Status Card */}
+        {/* Bottom Institutional Info Card */}
         <div className="p-5 m-4 rounded-2xl bg-gradient-to-br from-slate-50 to-emerald-50/40 border border-slate-200/80 shadow-2xs flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-emerald-600 text-[20px]">
-              verified
-            </span>
-            <span className="text-xs font-bold text-slate-900">
-              501(c)(3) Endowment Active
-            </span>
+            <span className="material-symbols-outlined text-[#066842] text-[20px]">verified</span>
+            <span className="text-xs font-bold text-slate-900">Statutory Trust Fund</span>
           </div>
           <p className="text-xs text-slate-500 leading-relaxed">
-            Academic Year 2024–25 ledger synced. Title I matching funds active.
+            Kwara State Education Trust Fund Law No. 3 (2021) as amended. All records securely stored.
           </p>
           <button
             onClick={handleReturnHome}
-            className="mt-1 inline-flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-xl bg-white text-xs font-bold text-slate-700 hover:text-emerald-700 hover:border-emerald-600 border border-slate-200/90 shadow-2xs transition-all cursor-pointer"
+            className="mt-1 inline-flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-xl bg-white text-xs font-bold text-slate-700 hover:text-[#066842] hover:border-[#066842] border border-slate-200/90 shadow-2xs transition-all cursor-pointer"
           >
-            <span>&larr; Back to Public Site</span>
+            <span>&larr; Back to Public Website</span>
           </button>
         </div>
       </aside>
@@ -328,55 +505,44 @@ export const AdminDashboard = ({ onNavigate }) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all shadow-2xs"
-                placeholder="Search student pledges, alumni gifts, blog articles..."
+                placeholder="Search donors, allocations, inquiries..."
                 type="text"
               />
-            </div>
-
-            <div className="hidden xl:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/70 text-slate-600 whitespace-nowrap text-xs font-semibold">
-              <span className="material-symbols-outlined text-[18px] text-slate-500">
-                calendar_today
-              </span>
-              <span>Today: Nov 2, 2026</span>
             </div>
           </div>
 
           {/* Right Header Controls */}
           <div className="flex items-center gap-3 sm:gap-4 pl-4">
             <button
-              onClick={() => triggerNotice('Opening New Gift Form...')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold text-xs sm:text-sm hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer active:scale-95"
+              onClick={() => setShowDonationModal(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#066842] text-white font-semibold text-xs sm:text-sm hover:bg-[#055234] transition-colors shadow-sm cursor-pointer active:scale-95"
               type="button"
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
-              <span className="hidden sm:inline">Record School Gift</span>
+              <span className="hidden sm:inline">Record Donation</span>
             </button>
 
             <button
-              onClick={() => triggerNotice('3 unread system alerts')}
-              aria-label="Notifications"
-              className="relative p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer"
+              onClick={() => setShowPostModal(true)}
+              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs sm:text-sm transition-colors cursor-pointer active:scale-95"
               type="button"
+              title="Draft Announcement"
             >
-              <span className="material-symbols-outlined text-[22px]">
-                notifications
-              </span>
-              <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-white text-[10px] font-bold leading-none ring-2 ring-white">
-                3
-              </span>
+              <span className="material-symbols-outlined text-[18px]">post_add</span>
+              <span className="hidden md:inline">Post</span>
             </button>
 
-            {/* Profile Pill */}
+            {/* Institutional Pill */}
             <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
-              <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold shadow-xs ring-2 ring-emerald-500/30">
-                EV
+              <div className="w-10 h-10 rounded-full bg-slate-900 text-[#c8b268] flex items-center justify-center text-sm font-bold shadow-xs">
+                KETF
               </div>
               <div className="hidden md:flex flex-col text-left">
                 <span className="text-sm font-bold text-slate-900 leading-tight">
-                  Elena Vance
+                  KwaraETF Admin
                 </span>
                 <span className="text-[11px] font-semibold text-slate-400 leading-tight">
-                  Lead Admin
+                  Secretariat
                 </span>
               </div>
             </div>
@@ -391,26 +557,37 @@ export const AdminDashboard = ({ onNavigate }) => {
               <div className="space-y-2 max-w-3xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-800 text-[11px] font-bold uppercase tracking-wider">
                   <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-                  Operational Telemetry Live
+                  KwaraETF Activity Dashboard
                 </div>
                 <h1 className="text-3xl sm:text-4xl lg:text-[2.25rem] font-extrabold tracking-tight text-slate-900 leading-tight">
-                  Good morning, Elena 👋
+                  Management Console
                 </h1>
                 <p className="text-sm sm:text-base text-slate-500 leading-relaxed">
-                  Here is what happened across campus campaigns, tuition aid gifts, parent inquiries, and school blog stories today.
+                  Real-time ledger for trust fund donations, citizen and school inquiries, campaign goals, and public announcements.
                 </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 shrink-0">
                 <button
-                  onClick={() => triggerNotice('Exporting CSV Summary Report...')}
+                  onClick={() => {
+                    const dataStr =
+                      'data:text/json;charset=utf-8,' +
+                      encodeURIComponent(
+                        JSON.stringify({ donations, inquiries, announcements }, null, 2)
+                      )
+                    const dl = document.createElement('a')
+                    dl.setAttribute('href', dataStr)
+                    dl.setAttribute('download', 'kwaraetf_data_export.json')
+                    dl.click()
+                    triggerNotice('Ledger backup exported as JSON')
+                  }}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm shadow-2xs hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer active:scale-95"
                   type="button"
                 >
                   <span className="material-symbols-outlined text-[18px] text-slate-500">
                     download
                   </span>
-                  <span>Export Report</span>
+                  <span>Export Data</span>
                 </button>
 
                 <a
@@ -418,8 +595,8 @@ export const AdminDashboard = ({ onNavigate }) => {
                   onClick={handleReturnHome}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white font-semibold text-sm shadow-sm hover:bg-slate-800 transition-all cursor-pointer active:scale-95"
                 >
-                  <span className="material-symbols-outlined text-[18px] text-emerald-400">
-                    school
+                  <span className="material-symbols-outlined text-[18px] text-[#c8b268]">
+                    visibility
                   </span>
                   <span>View Public Site</span>
                 </a>
@@ -432,7 +609,7 @@ export const AdminDashboard = ({ onNavigate }) => {
               <div className="bg-white rounded-2xl p-6 lg:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] flex flex-col justify-between space-y-6 hover:shadow-lg transition-all duration-300 relative overflow-hidden group border border-slate-200/90">
                 <div className="flex items-start justify-between">
                   <span className="text-sm font-semibold text-slate-600">
-                    Total Tuition Aid &amp; Fund Raised
+                    Total Funds &amp; Endowments
                   </span>
                   <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
                     <span className="material-symbols-outlined text-[20px]">
@@ -443,41 +620,22 @@ export const AdminDashboard = ({ onNavigate }) => {
 
                 <div className="space-y-2">
                   <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-                    $184,250
+                    {formatNaira(totalFundsRaised)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
-                      <span className="material-symbols-outlined text-[14px]">
-                        trending_up
-                      </span>
-                      +18.4%
-                    </span>
-                    <span className="text-xs font-medium text-slate-500">
-                      vs. last term
+                    <span className="text-xs font-semibold text-slate-500">
+                      {donations.length} recorded contribution{donations.length === 1 ? '' : 's'}
                     </span>
                   </div>
                 </div>
 
                 <div className="w-full pt-2">
-                  <svg
-                    className="w-full h-8 text-emerald-600"
-                    fill="none"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 100 24"
-                  >
-                    <path
-                      d="M0 20 Q 25 15, 50 18 T 80 8 T 100 4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
+                  <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-600 rounded-full transition-all duration-700"
+                      style={{ width: `${Math.min(100, Math.max(5, campaignPercent))}%` }}
                     />
-                    <path
-                      d="M0 20 Q 25 15, 50 18 T 80 8 T 100 4 L 100 24 L 0 24 Z"
-                      fill="currentColor"
-                      fillOpacity="0.08"
-                    />
-                  </svg>
+                  </div>
                 </div>
               </div>
 
@@ -485,7 +643,7 @@ export const AdminDashboard = ({ onNavigate }) => {
               <div className="bg-white rounded-2xl p-6 lg:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] flex flex-col justify-between space-y-6 hover:shadow-lg transition-all duration-300 border border-slate-200/90">
                 <div className="flex items-start justify-between">
                   <span className="text-sm font-semibold text-slate-600">
-                    Parent &amp; Community Inquiries
+                    Citizen &amp; School Inquiries
                   </span>
                   <div className="p-2.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-100">
                     <span className="material-symbols-outlined text-[20px]">
@@ -497,74 +655,60 @@ export const AdminDashboard = ({ onNavigate }) => {
                 <div className="space-y-2">
                   <div className="flex items-baseline gap-2.5">
                     <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-                      14
+                      {unreadInquiriesCount}
                     </span>
-                    <span className="text-sm font-semibold text-slate-500">
-                      Unread
-                    </span>
+                    <span className="text-sm font-semibold text-slate-500">Pending</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 text-xs font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                      3 Flagged Admissions
-                    </span>
                     <span className="text-xs font-medium text-slate-500">
-                      Scholarships
+                      {inquiries.length} total message{inquiries.length === 1 ? '' : 's'}
                     </span>
                   </div>
                 </div>
 
                 <div className="pt-3 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 font-medium">
-                  <span>Average response time</span>
-                  <span className="font-bold text-slate-900">35 mins</span>
+                  <span>Contact Form Sync</span>
+                  <span className="font-bold text-emerald-700">Active</span>
                 </div>
               </div>
 
-              {/* Card 3: Alumni Sponsors */}
+              {/* Card 3: Active Donors */}
               <div className="bg-white rounded-2xl p-6 lg:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] flex flex-col justify-between space-y-6 hover:shadow-lg transition-all duration-300 border border-slate-200/90">
                 <div className="flex items-start justify-between">
                   <span className="text-sm font-semibold text-slate-600">
-                    Active Alumni &amp; Sponsors
+                    Active Donors &amp; Partners
                   </span>
                   <div className="p-2.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-100">
-                    <span className="material-symbols-outlined text-[20px]">
-                      loyalty
-                    </span>
+                    <span className="material-symbols-outlined text-[20px]">group</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-                    842
+                    {uniqueDonorsCount}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
-                      <span className="material-symbols-outlined text-[14px]">
-                        arrow_upward
-                      </span>
-                      +46
-                    </span>
                     <span className="text-xs font-medium text-slate-500">
-                      new alumni sponsors
+                      Unique philanthropic contributors
                     </span>
                   </div>
                 </div>
 
                 <div className="pt-3 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 font-medium">
-                  <span>Pledge Fulfillment</span>
-                  <span className="font-bold text-slate-900">98.4%</span>
+                  <span>Donor Types</span>
+                  <span className="font-bold text-slate-900">Alumni, Corporate, Public</span>
                 </div>
               </div>
 
-              {/* Card 4: Published Stories */}
+              {/* Card 4: Published News / CMS */}
               <div className="bg-white rounded-2xl p-6 lg:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_6px_16px_rgba(0,0,0,0.02)] flex flex-col justify-between space-y-6 hover:shadow-lg transition-all duration-300 border border-slate-200/90">
                 <div className="flex items-start justify-between">
                   <span className="text-sm font-semibold text-slate-600">
-                    Published Blog &amp; Stories
+                    Announcements &amp; Stories
                   </span>
                   <div className="p-2.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-100">
                     <span className="material-symbols-outlined text-[20px]">
-                      menu_book
+                      campaign
                     </span>
                   </div>
                 </div>
@@ -572,76 +716,55 @@ export const AdminDashboard = ({ onNavigate }) => {
                 <div className="space-y-2">
                   <div className="flex items-baseline gap-2.5">
                     <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-                      24
+                      {announcements.length}
                     </span>
-                    <span className="text-sm font-semibold text-slate-500">
-                      Live Stories
-                    </span>
+                    <span className="text-sm font-semibold text-slate-500">Custom Posts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">
-                      <span className="material-symbols-outlined text-[14px]">
-                        edit_note
-                      </span>
-                      3 In Review
-                    </span>
                     <span className="text-xs font-medium text-slate-500">
-                      +12.4k views
+                      Editorial queue entries
                     </span>
                   </div>
                 </div>
 
                 <div className="pt-3 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 font-medium">
-                  <span>Top Post Engagement</span>
-                  <span className="font-bold text-slate-900">4.8k reads</span>
+                  <span>Public Dispatches</span>
+                  <span className="font-bold text-slate-900">7 Pages Live</span>
                 </div>
               </div>
             </section>
 
-            {/* Featured Spotlight Campaign Card */}
+            {/* Spotlight Campaign Card */}
             <section className="bg-white rounded-3xl shadow-[0_2px_8px_rgba(0,0,0,0.04),0_12px_28px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col lg:flex-row border border-slate-200/90">
-              <div className="lg:w-5/12 min-h-[280px] lg:min-h-full relative overflow-hidden bg-slate-900">
-                <img
-                  alt="STEM Lab & Digital Library Expansion Students"
-                  className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdiN9cwAOVKbW-1d-T73rEmsH1eZuBJoxpelOhTThqe6MmZZKASq5KxlU0g6l0gSfSFad7GUWyjUvpkB1IxrMsmKShKoEXMwwySva-x1KUnbD2Ol_umSTsY7qpN_YxglFYwHKUVG3fc3fzOPKPHY4Md7KbXttrvduGvef1e3LKFXfUWddPG7BcRVqaJ-9J4dA-CVhm5FdruPlIErUaQAhVPOJYP2kaAVw84wuCcA0E"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent lg:hidden" />
-                <div className="absolute bottom-5 left-5 lg:hidden">
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-slate-900 text-xs font-bold shadow-md">
-                    <span className="w-2 h-2 rounded-full bg-emerald-600" />
-                    Academic Priority
-                  </span>
+              <div className="lg:w-5/12 min-h-[240px] lg:min-h-full relative overflow-hidden bg-[#064e3b] flex items-center justify-center p-8 text-white">
+                <div className="space-y-4 max-w-sm text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[#f3df9d] text-xs font-bold border border-[#c8b268]/40">
+                    <span className="w-2 h-2 rounded-full bg-[#c8b268]" />
+                    Spotlight Educational Drive
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                    {campaign.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
+                    {campaign.description}
+                  </p>
                 </div>
               </div>
 
               <div className="lg:w-7/12 p-8 lg:p-10 flex flex-col justify-between space-y-7">
                 <div className="space-y-4">
-                  <div className="hidden lg:flex items-center gap-3">
+                  <div className="flex items-center justify-between gap-3">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-                      <span className="w-2 h-2 rounded-full bg-emerald-600" />
-                      Goal Nearing (91%)
+                      Target: {formatNaira(campaign.goal)}
                     </span>
-                    <span className="text-slate-300">•</span>
-                    <span className="text-xs font-semibold text-slate-500">
-                      HopeBridge Partner Campus • Fall Campaign
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3">
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                      STEM Lab &amp; Digital Library Expansion 2024-2025
-                    </h2>
                     <span className="inline-flex items-center gap-1.5 text-amber-900 bg-amber-50 border border-amber-200/70 px-3 py-1 rounded-xl text-xs font-bold shrink-0">
-                      <span className="material-symbols-outlined text-[16px]">
-                        schedule
-                      </span>
-                      6 days remaining
+                      <span className="material-symbols-outlined text-[16px]">schedule</span>
+                      {campaign.daysRemaining} days remaining
                     </span>
                   </div>
 
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
-                    Modernizing science labs and providing Chromebooks &amp; robotics kits for 650 middle and high school students across underserved regional partner schools.
+                  <p className="text-xs sm:text-sm font-semibold text-slate-500">
+                    {campaign.partnerCampus}
                   </p>
                 </div>
 
@@ -649,70 +772,117 @@ export const AdminDashboard = ({ onNavigate }) => {
                   <div className="flex justify-between items-baseline">
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums">
-                        $68,400
+                        {formatNaira(totalFundsRaised)}
                       </span>
                       <span className="text-xs sm:text-sm font-medium text-slate-500">
-                        pledged of $75,000 goal
+                        recorded of {formatNaira(campaign.goal)} target
                       </span>
                     </div>
                     <span className="text-sm font-bold text-emerald-700">
-                      91% Funded
+                      {campaignPercent}% Achieved
                     </span>
                   </div>
 
                   <div className="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden p-0.5">
                     <div
-                      className="bg-emerald-600 h-full rounded-full transition-all duration-1000 ease-out shadow-xs"
-                      style={{ width: '91%' }}
+                      className="bg-[#066842] h-full rounded-full transition-all duration-700 ease-out shadow-xs"
+                      style={{ width: `${Math.min(100, Math.max(0, campaignPercent))}%` }}
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-sm font-semibold">
-                      <span className="material-symbols-outlined text-[18px] text-slate-500">
-                        group
-                      </span>
-                      <span>312 Donors</span>
+                  <div className="flex items-center gap-3">
+                    <div className="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-sm font-semibold">
+                      <span>{uniqueDonorsCount} Donors</span>
                     </div>
-                    <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-sm font-semibold">
-                      <span className="material-symbols-outlined text-[18px] text-slate-500">
-                        analytics
-                      </span>
-                      <span>$219 Avg Gift</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-sm font-semibold">
-                      <span className="material-symbols-outlined text-[18px] text-slate-500">
-                        menu_book
-                      </span>
-                      <span>650 Students</span>
+                    <div className="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-sm font-semibold">
+                      <span>{donations.length} Contributions</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => triggerNotice('Opening Campaign Manager...')}
+                      onClick={() => setEditingCampaign(!editingCampaign)}
                       className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs sm:text-sm hover:bg-slate-800 transition-all shadow-xs cursor-pointer active:scale-95"
                       type="button"
                     >
-                      <span className="material-symbols-outlined text-[18px]">
-                        tune
-                      </span>
-                      <span>Manage</span>
+                      <span className="material-symbols-outlined text-[18px]">tune</span>
+                      <span>{editingCampaign ? 'Close' : 'Adjust Campaign Goal'}</span>
                     </button>
                     <button
-                      onClick={() => triggerNotice('Drafting Blog Story...')}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95"
+                      onClick={() => setShowDonationModal(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#066842] text-white font-bold text-xs sm:text-sm hover:bg-[#055234] transition-all cursor-pointer active:scale-95 shadow-xs"
                       type="button"
                     >
-                      <span className="material-symbols-outlined text-[18px]">
-                        post_add
-                      </span>
-                      <span>Publish Update</span>
+                      <span className="material-symbols-outlined text-[18px]">add</span>
+                      <span>Record Gift</span>
                     </button>
                   </div>
                 </div>
+
+                {/* Inline Campaign Editor */}
+                {editingCampaign && (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      saveCampaign(campaignForm)
+                      setEditingCampaign(false)
+                      triggerNotice('Campaign details updated')
+                    }}
+                    className="mt-4 p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4"
+                  >
+                    <h4 className="font-bold text-sm text-slate-900">Update Campaign Targets</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-slate-600 block mb-1">
+                          Campaign Title
+                        </label>
+                        <input
+                          type="text"
+                          value={campaignForm.title}
+                          onChange={(e) =>
+                            setCampaignForm({ ...campaignForm, title: e.target.value })
+                          }
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-slate-600 block mb-1">
+                          Funding Target (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={campaignForm.goal}
+                          onChange={(e) =>
+                            setCampaignForm({
+                              ...campaignForm,
+                              goal: Number(e.target.value) || 0,
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingCampaign(false)}
+                        className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-1.5 rounded-lg bg-[#066842] text-white text-xs font-bold"
+                      >
+                        Save Targets
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             </section>
 
@@ -723,10 +893,10 @@ export const AdminDashboard = ({ onNavigate }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                      Recent School Donations &amp; Alumni Pledges
+                      Donations &amp; Endowments Ledger
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                      Real-time feed across payment gateways and ledger deposits
+                      Direct contributions, alumni gifts, and corporate sponsorships
                     </p>
                   </div>
 
@@ -754,34 +924,43 @@ export const AdminDashboard = ({ onNavigate }) => {
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-slate-50/80 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-y border-slate-200/80">
-                        <th className="py-3.5 px-6 font-bold">
-                          Donor / Source
-                        </th>
-                        <th className="py-3.5 px-4 font-bold">
-                          Campaign Allocation
-                        </th>
-                        <th className="py-3.5 px-4 font-bold text-right">
-                          Amount
-                        </th>
+                        <th className="py-3.5 px-6 font-bold">Donor / Benefactor</th>
+                        <th className="py-3.5 px-4 font-bold">Allocation Fund</th>
+                        <th className="py-3.5 px-4 font-bold text-right">Amount</th>
                         <th className="py-3.5 px-4 font-bold">Status</th>
-                        <th className="py-3.5 px-6 font-bold text-right">
-                          Action
-                        </th>
+                        <th className="py-3.5 px-6 font-bold text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-sm">
                       {filteredDonations.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="py-12 text-center text-slate-400 text-sm">
-                            No transactions found for filter "{donationFilter}".
+                          <td colSpan={5} className="py-14 text-center">
+                            <div className="max-w-sm mx-auto flex flex-col items-center gap-3">
+                              <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                <span className="material-symbols-outlined text-[24px]">
+                                  inbox
+                                </span>
+                              </div>
+                              <h4 className="font-bold text-slate-800 text-sm">
+                                No donation records yet
+                              </h4>
+                              <p className="text-xs text-slate-500">
+                                Click below to record a donation, endowment pledge, or alumni gift.
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => setShowDonationModal(true)}
+                                className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#066842] text-white text-xs font-bold hover:bg-[#055234] shadow-xs cursor-pointer"
+                              >
+                                <span className="material-symbols-outlined text-[16px]">add</span>
+                                <span>Record First Donation</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ) : (
                         filteredDonations.map((item) => (
-                          <tr
-                            key={item.id}
-                            className="hover:bg-slate-50/70 transition-colors"
-                          >
+                          <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
                             <td className="py-4.5 px-6">
                               <div className="flex items-center gap-3.5">
                                 <div
@@ -795,11 +974,11 @@ export const AdminDashboard = ({ onNavigate }) => {
                                       {item.donor}
                                     </span>
                                     <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold text-slate-600">
-                                      {item.tag}
+                                      {item.tag || item.category}
                                     </span>
                                   </div>
                                   <span className="text-xs text-slate-400 truncate mt-0.5">
-                                    {item.context}
+                                    {item.context} • {item.date}
                                   </span>
                                 </div>
                               </div>
@@ -810,11 +989,6 @@ export const AdminDashboard = ({ onNavigate }) => {
                             <td className="py-4.5 px-4 text-right">
                               <span className="font-bold text-slate-900 tabular-nums text-sm sm:text-base">
                                 {item.amount}
-                                {item.frequency && (
-                                  <span className="text-slate-400 font-normal text-xs">
-                                    {item.frequency}
-                                  </span>
-                                )}
                               </span>
                             </td>
                             <td className="py-4.5 px-4">
@@ -824,19 +998,28 @@ export const AdminDashboard = ({ onNavigate }) => {
                               </span>
                             </td>
                             <td className="py-4.5 px-6 text-right">
-                              <button
-                                onClick={() => {
-                                  setActiveReceipt(item)
-                                  triggerNotice(`Viewing receipt for ${item.donor}`)
-                                }}
-                                className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-                                title="View Receipt"
-                                type="button"
-                              >
-                                <span className="material-symbols-outlined text-[20px]">
-                                  receipt_long
-                                </span>
-                              </button>
+                              <div className="flex items-center justify-end gap-1">
+                                <button
+                                  onClick={() => setActiveReceipt(item)}
+                                  className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+                                  title="View Receipt"
+                                  type="button"
+                                >
+                                  <span className="material-symbols-outlined text-[20px]">
+                                    receipt_long
+                                  </span>
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteDonation(item.id)}
+                                  className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                                  title="Delete Record"
+                                  type="button"
+                                >
+                                  <span className="material-symbols-outlined text-[20px]">
+                                    delete
+                                  </span>
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -848,17 +1031,14 @@ export const AdminDashboard = ({ onNavigate }) => {
                 {/* Action Footer */}
                 <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-100">
                   <span className="text-xs sm:text-sm text-slate-500 font-medium">
-                    Showing {filteredDonations.length} of 184 transactions this month
+                    Showing {filteredDonations.length} of {donations.length} records
                   </span>
                   <button
-                    onClick={() => triggerNotice('Loading full ledger stream...')}
-                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-900 hover:text-emerald-700 transition-colors cursor-pointer self-start sm:self-auto"
+                    onClick={() => setShowDonationModal(true)}
+                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#066842] hover:text-[#055234] transition-colors cursor-pointer self-start sm:self-auto"
                     type="button"
                   >
-                    <span>View all 184 transactions</span>
-                    <span className="material-symbols-outlined text-[18px]">
-                      arrow_forward
-                    </span>
+                    <span>+ Add New Entry</span>
                   </button>
                 </div>
               </div>
@@ -871,222 +1051,198 @@ export const AdminDashboard = ({ onNavigate }) => {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                          Parent &amp; Admissions Inquiries
+                          Citizen &amp; School Inquiries
                         </h3>
                         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                          Portal submissions &amp; scholarship requests
+                          Submissions from public Contact Us page
                         </p>
                       </div>
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-bold shrink-0">
-                        3 Urgent
-                      </span>
+                      {unreadInquiriesCount > 0 && (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-bold shrink-0">
+                          {unreadInquiriesCount} Pending
+                        </span>
+                      )}
                     </div>
 
                     <div className="space-y-4">
-                      {/* Inquiry 1 */}
-                      <div className="p-4.5 rounded-2xl bg-slate-50/80 hover:bg-slate-50 transition-all space-y-3 border border-slate-200/70">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-slate-900 text-sm truncate">
-                                Patricia &amp; Marcus Hayes
-                              </span>
-                              <span className="text-xs text-slate-400">
-                                (9th Grade)
+                      {inquiries.length === 0 ? (
+                        <div className="p-8 rounded-2xl bg-slate-50 border border-slate-200/80 text-center space-y-2">
+                          <span className="material-symbols-outlined text-slate-400 text-[28px]">
+                            mail
+                          </span>
+                          <p className="text-xs font-semibold text-slate-700">
+                            No incoming inquiries right now.
+                          </p>
+                          <p className="text-[11px] text-slate-500">
+                            When users submit messages via the public Contact Us form, they will automatically appear here.
+                          </p>
+                        </div>
+                      ) : (
+                        inquiries.map((inq) => (
+                          <div
+                            key={inq.id}
+                            className={`p-4.5 rounded-2xl transition-all space-y-3 border ${
+                              inq.status === 'Resolved'
+                                ? 'bg-slate-50/50 border-slate-200 opacity-70'
+                                : 'bg-slate-50/90 hover:bg-slate-50 border-slate-200/80'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="space-y-0.5 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-slate-900 text-sm truncate">
+                                    {inq.name}
+                                  </span>
+                                  {inq.email && (
+                                    <span className="text-[11px] text-slate-400 truncate">
+                                      ({inq.email})
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-xs font-semibold text-slate-700 block truncate">
+                                  {inq.subject || 'General Inquiry'}
+                                </span>
+                              </div>
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0 ${
+                                  inq.status === 'Resolved'
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : 'bg-amber-100 text-amber-800'
+                                }`}
+                              >
+                                {inq.status || 'Pending'}
                               </span>
                             </div>
-                            <span className="text-xs font-semibold text-slate-700 block truncate">
-                              Need-Based Tuition Aid Application
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end shrink-0 gap-1">
-                            <span className="text-[11px] text-slate-400 font-medium">
-                              14m ago
-                            </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-100 text-red-800 text-[10px] font-bold">
-                              Admissions Aid
-                            </span>
-                          </div>
-                        </div>
 
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2">
-                          "We have submitted the W2 verification for our daughter's STEM honors scholarship application..."
-                        </p>
+                            <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                              {inq.message}
+                            </p>
 
-                        <div className="flex items-center justify-between pt-1">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => triggerNotice('Opening Reply Window for Hayes family...')}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer active:scale-95"
-                              type="button"
-                            >
-                              <span className="material-symbols-outlined text-[14px]">
-                                reply
-                              </span>
-                              Review &amp; Reply
-                            </button>
-                            <button
-                              onClick={() => triggerNotice('Forwarded to Aid Board Review')}
-                              className="px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 text-xs font-semibold hover:bg-slate-100 transition-all cursor-pointer"
-                              type="button"
-                            >
-                              Forward to Board
-                            </button>
+                            <div className="flex items-center justify-between pt-1">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => setShowInquiryModal(inq)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer active:scale-95"
+                                  type="button"
+                                >
+                                  <span className="material-symbols-outlined text-[14px]">
+                                    visibility
+                                  </span>
+                                  <span>View</span>
+                                </button>
+                                {inq.email && (
+                                  <a
+                                    href={`mailto:${inq.email}?subject=RE: ${encodeURIComponent(
+                                      inq.subject || 'KwaraETF Inquiry'
+                                    )}`}
+                                    className="px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 text-xs font-semibold hover:bg-slate-100 transition-all"
+                                  >
+                                    Reply
+                                  </a>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => handleResolveInquiry(inq.id)}
+                                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                    inq.status === 'Resolved'
+                                      ? 'text-emerald-700 hover:text-emerald-900'
+                                      : 'text-slate-400 hover:text-emerald-700'
+                                  }`}
+                                  title={
+                                    inq.status === 'Resolved'
+                                      ? 'Mark as Pending'
+                                      : 'Mark as Handled'
+                                  }
+                                  type="button"
+                                >
+                                  <span className="material-symbols-outlined text-[20px]">
+                                    check_circle
+                                  </span>
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteInquiry(inq.id)}
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                                  title="Delete"
+                                  type="button"
+                                >
+                                  <span className="material-symbols-outlined text-[20px]">
+                                    delete
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
                           </div>
-                          <button
-                            onClick={() => triggerNotice('Marked as Handled')}
-                            className="text-slate-400 hover:text-emerald-700 p-1 transition-colors cursor-pointer"
-                            title="Mark as Handled"
-                            type="button"
-                          >
-                            <span className="material-symbols-outlined text-[20px]">
-                              check_circle
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Inquiry 2 */}
-                      <div className="p-4.5 rounded-2xl bg-slate-50/80 hover:bg-slate-50 transition-all space-y-3 border border-slate-200/70">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-1 min-w-0">
-                            <span className="font-bold text-slate-900 text-sm truncate block">
-                              Dr. Emily Thornton
-                            </span>
-                            <span className="text-xs font-semibold text-slate-700 block truncate">
-                              Corporate Robotics Mentorship Offer
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end shrink-0 gap-1">
-                            <span className="text-[11px] text-slate-400 font-medium">
-                              1h ago
-                            </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                              STEM Partner
-                            </span>
-                          </div>
-                        </div>
-
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2">
-                          "Our engineering team at Micron is keen to run Saturday coding clinics and provide 15 refurbished workstations..."
-                        </p>
-
-                        <div className="flex items-center gap-2.5 pt-1">
-                          <button
-                            onClick={() => triggerNotice('Calendar invite sent to Dr. Thornton')}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-800 text-xs font-bold hover:bg-slate-100 transition-all cursor-pointer active:scale-95 shadow-2xs"
-                            type="button"
-                          >
-                            <span className="material-symbols-outlined text-[15px] text-slate-500">
-                              calendar_month
-                            </span>
-                            Schedule Call
-                          </button>
-                          <button
-                            onClick={() => triggerNotice('Opening draft email')}
-                            className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition-all cursor-pointer"
-                            type="button"
-                          >
-                            Reply
-                          </button>
-                        </div>
-                      </div>
+                        ))
+                      )}
                     </div>
                   </div>
 
-                  {/* School Blog & Story CMS */}
+                  {/* News & Announcements CMS */}
                   <div className="pt-5 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h4 className="text-xl font-bold text-slate-900 tracking-tight">
-                          School Blog &amp; Story CMS
+                          Announcements Queue
                         </h4>
                         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                          Recent articles &amp; donor editorial queue
+                          Draft notices and secretariat press statements
                         </p>
                       </div>
                       <button
-                        onClick={() => triggerNotice('Creating New Story Draft...')}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-2xs cursor-pointer active:scale-95"
+                        onClick={() => setShowPostModal(true)}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#066842] text-white text-xs font-bold hover:bg-[#055234] transition-colors shadow-2xs cursor-pointer active:scale-95"
                         type="button"
                       >
-                        <span className="material-symbols-outlined text-[16px]">
-                          edit_document
-                        </span>
+                        <span className="material-symbols-outlined text-[16px]">edit_document</span>
                         <span>New Post</span>
                       </button>
                     </div>
 
                     <div className="space-y-3">
-                      {/* Story 1 */}
-                      <div className="p-4 rounded-2xl bg-slate-50/80 hover:bg-slate-50 flex items-center justify-between gap-4 border border-slate-200/70 transition-all">
-                        <div className="space-y-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                              Published
-                            </span>
-                            <span className="text-xs text-slate-400 truncate">
-                              By Principal Vance • 4.8k reads
-                            </span>
-                          </div>
-                          <h5 className="text-sm font-bold text-slate-900 truncate">
-                            How Donor Pledges Funded Our New Robotics Arena
-                          </h5>
+                      {announcements.length === 0 ? (
+                        <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 text-center space-y-1">
+                          <p className="text-xs font-semibold text-slate-700">
+                            No custom announcements drafted yet.
+                          </p>
+                          <p className="text-[11px] text-slate-500">
+                            Click 'New Post' to create your first announcement draft.
+                          </p>
                         </div>
-                        <button
-                          onClick={() => triggerNotice('Editing "New Robotics Arena" Story')}
-                          className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-emerald-700 hover:border-emerald-500 transition-all shrink-0 cursor-pointer shadow-2xs"
-                          title="Edit Story"
-                          type="button"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">
-                            edit
-                          </span>
-                        </button>
-                      </div>
-
-                      {/* Story 2 */}
-                      <div className="p-4 rounded-2xl bg-slate-50/80 hover:bg-slate-50 flex items-center justify-between gap-4 border border-slate-200/70 transition-all">
-                        <div className="space-y-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold">
-                              Review
-                            </span>
-                            <span className="text-xs text-slate-400 truncate">
-                              By Student Council • 2 days ago
-                            </span>
+                      ) : (
+                        announcements.map((post) => (
+                          <div
+                            key={post.id}
+                            className="p-4 rounded-2xl bg-slate-50/80 hover:bg-slate-50 flex items-center justify-between gap-4 border border-slate-200/70 transition-all"
+                          >
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                                  {post.category}
+                                </span>
+                                <span className="text-xs text-slate-400 truncate">
+                                  {post.date} • {post.author}
+                                </span>
+                              </div>
+                              <h5 className="text-sm font-bold text-slate-900 truncate">
+                                {post.title}
+                              </h5>
+                            </div>
+                            <button
+                              onClick={() => handleDeletePost(post.id)}
+                              className="p-2 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-red-600 transition-all shrink-0 cursor-pointer shadow-2xs"
+                              title="Delete announcement"
+                              type="button"
+                            >
+                              <span className="material-symbols-outlined text-[18px]">
+                                delete
+                              </span>
+                            </button>
                           </div>
-                          <h5 className="text-sm font-bold text-slate-900 truncate">
-                            Student Spotlight: Maria's Journey to State Honors
-                          </h5>
-                        </div>
-                        <button
-                          onClick={() => triggerNotice('Reviewing Student Spotlight Draft')}
-                          className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-emerald-700 hover:border-emerald-500 transition-all shrink-0 cursor-pointer shadow-2xs"
-                          title="Review Story"
-                          type="button"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">
-                            rate_review
-                          </span>
-                        </button>
-                      </div>
+                        ))
+                      )}
                     </div>
                   </div>
-                </div>
-
-                {/* Footer Action */}
-                <div className="pt-5 border-t border-slate-100">
-                  <button
-                    onClick={() => triggerNotice('Opening Full Inquiries & Editorial Center...')}
-                    className="w-full py-3 px-4 text-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-2xs"
-                    type="button"
-                  >
-                    <span>Open Full Inquiries &amp; Stories Hub</span>
-                    <span className="material-symbols-outlined text-[18px]">
-                      arrow_forward
-                    </span>
-                  </button>
                 </div>
               </div>
             </section>
@@ -1094,7 +1250,317 @@ export const AdminDashboard = ({ onNavigate }) => {
         </main>
       </div>
 
-      {/* Demo Receipt Modal */}
+      {/* Record Donation Modal */}
+      {showDonationModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-fade-in"
+          onClick={() => setShowDonationModal(false)}
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-white p-7 shadow-2xl border border-slate-200 space-y-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-[#066842] text-[24px]">
+                  payments
+                </span>
+                <h4 className="font-extrabold text-slate-900 text-lg">Record Real Donation</h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDonationModal(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleAddDonation} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Donor / Benefactor Name *
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Offa Community Development Assn or Dr. A. Bello"
+                  value={donationForm.donor}
+                  onChange={(e) => setDonationForm({ ...donationForm, donor: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:bg-white focus:border-slate-900"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Amount (₦) *
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 500000"
+                    value={donationForm.amount}
+                    onChange={(e) => setDonationForm({ ...donationForm, amount: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:bg-white focus:border-slate-900"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Category</label>
+                  <select
+                    value={donationForm.category}
+                    onChange={(e) => setDonationForm({ ...donationForm, category: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:bg-white focus:border-slate-900"
+                  >
+                    <option value="One-time">One-time Gift</option>
+                    <option value="Monthly">Monthly Partner</option>
+                    <option value="Corporate">Corporate / Philanthropic</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Allocation Initiative / Fund
+                </label>
+                <select
+                  value={donationForm.allocation}
+                  onChange={(e) => setDonationForm({ ...donationForm, allocation: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:bg-white focus:border-slate-900"
+                >
+                  <option value="Scholarship Intervention Fund">
+                    Scholarship Intervention Fund
+                  </option>
+                  <option value="Adopt-A-School Public Infrastructure">
+                    Adopt-A-School Public Infrastructure
+                  </option>
+                  <option value="Teachers Lounge & Capacity Building">
+                    Teachers Lounge &amp; Capacity Building
+                  </option>
+                  <option value="STEM & Digital Literacy Expansion">
+                    STEM &amp; Digital Literacy Expansion
+                  </option>
+                  <option value="General KwaraETF Endowment">General KwaraETF Endowment</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Reference Context / Note
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Alumni 1998 Set donation or Bank Transfer Ref"
+                  value={donationForm.context}
+                  onChange={(e) => setDonationForm({ ...donationForm, context: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:bg-white focus:border-slate-900"
+                />
+              </div>
+
+              <div className="pt-3 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowDonationModal(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-[#066842] text-white text-xs font-bold hover:bg-[#055234] shadow-sm cursor-pointer"
+                >
+                  Save to Ledger
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* New Post Modal */}
+      {showPostModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-fade-in"
+          onClick={() => setShowPostModal(false)}
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-white p-7 shadow-2xl border border-slate-200 space-y-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-[#066842] text-[24px]">
+                  campaign
+                </span>
+                <h4 className="font-extrabold text-slate-900 text-lg">New Announcement</h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPostModal(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleAddPost} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Headline *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. KwaraETF Announces 2026 Bursary Application Window"
+                  value={postForm.title}
+                  onChange={(e) => setPostForm({ ...postForm, title: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:bg-white focus:border-slate-900"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Category</label>
+                  <select
+                    value={postForm.category}
+                    onChange={(e) => setPostForm({ ...postForm, category: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm"
+                  >
+                    <option value="Official Announcement">Official Announcement</option>
+                    <option value="Scholarship Dispatch">Scholarship Dispatch</option>
+                    <option value="Infrastructure Upgrade">Infrastructure Upgrade</option>
+                    <option value="Press Statement">Press Statement</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Author</label>
+                  <input
+                    type="text"
+                    value={postForm.author}
+                    onChange={(e) => setPostForm({ ...postForm, author: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Summary / Details
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Key briefing points or public release statement..."
+                  value={postForm.summary}
+                  onChange={(e) => setPostForm({ ...postForm, summary: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:bg-white focus:border-slate-900"
+                />
+              </div>
+
+              <div className="pt-3 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowPostModal(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-[#066842] text-white text-xs font-bold hover:bg-[#055234] shadow-sm cursor-pointer"
+                >
+                  Save Post
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Inquiry Detail Modal */}
+      {showInquiryModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-fade-in"
+          onClick={() => setShowInquiryModal(null)}
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-white p-7 shadow-2xl border border-slate-200 space-y-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-[#066842] text-[24px]">mail</span>
+                <h4 className="font-extrabold text-slate-900 text-lg">Inquiry Details</h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowInquiryModal(null)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div>
+                <span className="text-xs text-slate-400 font-semibold uppercase">Sender</span>
+                <p className="font-bold text-slate-900 text-base">{showInquiryModal.name}</p>
+                <p className="text-xs text-slate-500">{showInquiryModal.email}</p>
+              </div>
+
+              <div>
+                <span className="text-xs text-slate-400 font-semibold uppercase">Subject</span>
+                <p className="font-semibold text-slate-800">
+                  {showInquiryModal.subject || 'General Inquiry'}
+                </p>
+              </div>
+
+              <div>
+                <span className="text-xs text-slate-400 font-semibold uppercase">Date</span>
+                <p className="text-xs text-slate-600">{showInquiryModal.date}</p>
+              </div>
+
+              <div>
+                <span className="text-xs text-slate-400 font-semibold uppercase">Message</span>
+                <div className="mt-1 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap">
+                  {showInquiryModal.message}
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 flex gap-2">
+              {showInquiryModal.email && (
+                <a
+                  href={`mailto:${showInquiryModal.email}?subject=RE: ${encodeURIComponent(
+                    showInquiryModal.subject || 'KwaraETF Inquiry'
+                  )}`}
+                  className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 text-center shadow-xs"
+                >
+                  Reply via Email
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  handleResolveInquiry(showInquiryModal.id)
+                  setShowInquiryModal(null)
+                }}
+                className="px-4 py-2.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-bold hover:bg-emerald-200 cursor-pointer"
+              >
+                {showInquiryModal.status === 'Resolved' ? 'Re-open' : 'Mark Handled'}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDeleteInquiry(showInquiryModal.id)}
+                className="px-4 py-2.5 rounded-xl bg-red-50 text-red-700 text-xs font-bold hover:bg-red-100 cursor-pointer"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Official Receipt Modal */}
       {activeReceipt && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-fade-in"
@@ -1106,10 +1572,10 @@ export const AdminDashboard = ({ onNavigate }) => {
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-emerald-600 text-[24px]">
+                <span className="material-symbols-outlined text-[#066842] text-[24px]">
                   receipt
                 </span>
-                <h4 className="font-extrabold text-slate-900 text-lg">Official Donation Receipt</h4>
+                <h4 className="font-extrabold text-slate-900 text-lg">Official Trust Fund Receipt</h4>
               </div>
               <button
                 type="button"
@@ -1122,26 +1588,34 @@ export const AdminDashboard = ({ onNavigate }) => {
 
             <div className="space-y-3.5 text-sm">
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Donor Name:</span>
+                <span className="text-slate-500">Receipt Ref:</span>
+                <span className="font-mono text-xs font-bold text-slate-800">
+                  KETF-{activeReceipt.id?.slice(-8).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500">Donor / Benefactor:</span>
                 <span className="font-bold text-slate-900">{activeReceipt.donor}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Allocation Fund:</span>
+                <span className="text-slate-500">Fund Allocation:</span>
                 <span className="font-semibold text-slate-800">{activeReceipt.allocation}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Gift Amount:</span>
-                <span className="font-extrabold text-emerald-700 text-lg">{activeReceipt.amount}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Status:</span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
-                  {activeReceipt.status}
+                <span className="text-slate-500">Amount:</span>
+                <span className="font-extrabold text-[#066842] text-lg">
+                  {activeReceipt.amount}
                 </span>
               </div>
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500">Date:</span>
+                <span className="font-medium text-slate-700">{activeReceipt.date}</span>
+              </div>
               <div className="flex justify-between py-1">
-                <span className="text-slate-500">Tax Deductible:</span>
-                <span className="font-bold text-slate-900">501(c)(3) Eligible</span>
+                <span className="text-slate-500">Status:</span>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
+                  {activeReceipt.status || 'Verified'}
+                </span>
               </div>
             </div>
 
@@ -1149,17 +1623,16 @@ export const AdminDashboard = ({ onNavigate }) => {
               <button
                 type="button"
                 onClick={() => {
-                  triggerNotice(`Receipt PDF downloaded for ${activeReceipt.donor}`)
-                  setActiveReceipt(null)
+                  window.print()
                 }}
-                className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 shadow-sm"
+                className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 shadow-sm cursor-pointer"
               >
-                Download PDF Receipt
+                Print Receipt
               </button>
               <button
                 type="button"
                 onClick={() => setActiveReceipt(null)}
-                className="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200"
+                className="px-5 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 cursor-pointer"
               >
                 Close
               </button>
