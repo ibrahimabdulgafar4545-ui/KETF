@@ -311,10 +311,7 @@ const BoardCommitteeMembers = ({ onNavigate }) => {
         />
 
         <div className="relative mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-20 lg:px-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#c8b268]/40 bg-white/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-[#f3df9d] backdrop-blur-md">
-            <span className="h-2 w-2 rounded-full bg-[#c8b268] animate-pulse" />
-            <span>Governance & Strategic Oversight</span>
-          </div>
+          
 
           <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
             Board Committee Members
