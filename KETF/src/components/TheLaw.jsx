@@ -128,7 +128,7 @@ const TheLaw = ({ onNavigate }) => {
                 {/* Top Color Accent Bar */}
                 <div className="h-1.5 w-full bg-gradient-to-r from-[#066842] via-[#c8b268] to-[#084d49]" />
 
-                <div className="p-6 sm:p-8">
+                <div className="p-4.5 sm:p-8">
                   {/* Top Meta Row */}
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <span className="inline-flex items-center rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-[#066842] ring-1 ring-[#066842]/20 ring-inset md:hidden">
@@ -175,7 +175,7 @@ const TheLaw = ({ onNavigate }) => {
                       href={law.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/btn inline-flex shrink-0 items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-250 hover:-translate-y-0.5 hover:border-[#991b1b] hover:bg-[#b31b1b] hover:shadow-md active:translate-y-0"
+                      className="group/btn w-full sm:w-auto inline-flex shrink-0 items-center justify-center gap-2.5 rounded-full border border-[#6a8752] bg-[#066842] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-250 hover:-translate-y-0.5 hover:border-[#991b1b] hover:bg-[#b31b1b] hover:shadow-md active:translate-y-0 text-center cursor-pointer"
                     >
                       <span className="relative flex h-4.5 w-4.5 items-center justify-center">
                         {/* Default Download Arrow Icon */}
