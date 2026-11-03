@@ -4,6 +4,7 @@ import ScrollToTop from './components/ScrollToTop.jsx'
 import Navbar from './components/navbar.jsx'
 import TheLaw from './components/TheLaw.jsx'
 import BoardMembers from './components/BoardMembers.jsx'
+import BoardCommitteeMembers from './components/BoardCommitteeMembers.jsx'
 import Secretariat from './components/Secretariat.jsx'
 import Prospectus from './components/Prospectus.jsx'
 import DevelopmentPlan from './components/DevelopmentPlan.jsx'
@@ -139,6 +140,9 @@ const AppLayout = () => {
           <TheLaw onNavigate={navigate} />
         ) : route === '#board-members' ? (
           <BoardMembers />
+        ) : route === '#board-committee-members' ||
+          route === '#board-commitee-members' ? (
+          <BoardCommitteeMembers onNavigate={navigate} />
         ) : route === '#secretariat' ? (
           <Secretariat />
         ) : route === '#prospectus' ? (
