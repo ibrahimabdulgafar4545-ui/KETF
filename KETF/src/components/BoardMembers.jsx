@@ -159,9 +159,8 @@ const BoardMembers = () => {
             </h1>
             <div className="mx-auto mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-[#c8b268] to-[#f3df9d]" />
             <p className="mt-5 text-base leading-relaxed text-emerald-50/90 sm:text-lg">
-              Distinguished leaders, policy experts, and dedicated professionals
-              providing strategic oversight and transparent governance for the
-              Kwara State Education Trust Fund.
+              Board Committee Members
+Specialised standing committees of the Kwara State Education Trust Fund established to drive fiduciary discipline, transparent stewardship, risk governance, and measurable impact across all educational interventions.
             </p>
           </div>
         </div>
